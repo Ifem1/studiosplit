@@ -24,8 +24,8 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 
 **Phase:** StudioNet live receipt and hosted read deployment verified; runtime runner and hosted wallet-write proof pending  
 **Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`  
-**StudioNet contract:** Original live address plus separately deployed hardened address; see authoritative status below
-**Live frontend:** https://web-three-teal-52.vercel.app (READY; live read verified)
+**StudioNet contract:** `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (canonical hardened deployment)
+**Live frontend:** https://studiosplit-web.vercel.app (READY; live read verified against canonical contract)
 **Last durable update:** 2026-08-25
 
 The first implementing agent must not invent fake deployment addresses, transaction hashes, test counts or live URLs. Add them here only after they exist and have been verified.
@@ -155,4 +155,4 @@ The repository was cloned and audited. The real contract/frontend source exists;
 
 Frontend dependencies installed successfully. TypeScript, ESLint, Next production build, frontend tests (4 passed), and direct tests (7 passed, 1 skipped) pass. StudioNet deployment is verified from source commit `8ffd51da2524209e3f4df0196cad769d759eb5c0`: contract `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`, deployment tx `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`, schema 15 methods. Read-only smoke returned project_count 0. Live lifecycle and hosted frontend remain unproven; CLI writes with malformed rubric/url were rejected fail-closed.
 
-Current authoritative status supersedes earlier entries: the original `0xaABd...` deployment now has a live finalized project 1 and exact 10,000-bps receipt, using txs `0xcab4b355976ea66f3b97ef106a8b9b58bb45914d38c3f0994916ccb6543db69a` and `0x6d08c17230e4fe8938c5972a56d1bf3d37afff4692931ae0f8d0f1008199d8b3`. Hardened source was separately deployed at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (`0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`) with digest/candidate-memory guards and verified schema. No hosted frontend or hosted wallet write is claimed.
+Current authoritative status supersedes earlier entries: the canonical hardened deployment is `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (`0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`). Its project 1 reads `ABSTAINED` with `total_bps=0`, so no hardened 10,000-bps receipt is claimed. The production frontend at `https://studiosplit-web.vercel.app` reads this canonical contract and its Artifacts route is hard-refresh verified.

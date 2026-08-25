@@ -1,6 +1,6 @@
 # StudioSplit deployment truth
 
-StudioSplit has two immutable StudioNet deployments relevant to this release.
+The hardened deployment is the single canonical StudioSplit contract for this release. The original deployment is retained only as superseded historical evidence.
 
 - Contract: `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`
 - Deployment transaction: `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`
@@ -8,9 +8,9 @@ StudioSplit has two immutable StudioNet deployments relevant to this release.
 - Official StudioNet explorer: https://explorer-studio.genlayer.com
 - Deployed schema: verified; 15 required methods present
 
-The original address above has the verified live project lifecycle. Project 1 was created by `0x16c97554913166697b990467607a03c967584d8b6e973ab356412c89dd6a885b` and finalized by `0xcab4b355976ea66f3b97ef106a8b9b58bb45914d38c3f0994916ccb6543db69a` and `0x6d08c17230e4fe8938c5972a56d1bf3d37afff4692931ae0f8d0f1008199d8b3`; the authoritative receipt total is 10,000 bps.
+The original address above is superseded historical evidence. Its project 1 receipt totaled 10,000 bps, but it is not the production contract.
 
-The hardened source with evidence digest verification and retrieved-candidate memory authorization is deployed at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde`, tx `0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`, with GenVM `SUCCESS` and verified schema. No lifecycle is claimed for that second address.
+The canonical hardened source with evidence digest verification and retrieved-candidate memory authorization is deployed at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde`, tx `0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`, with GenVM `SUCCESS` and verified schema. Its project 1 currently reads `ABSTAINED`, `total_bps=0`; a valid hardened 10,000-bps receipt is not claimed.
 
 ## Target
 

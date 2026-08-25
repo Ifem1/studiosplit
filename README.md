@@ -75,17 +75,15 @@ npm run build                                         PASS
 
 The single skipped direct suite is the real `genlayer-test` runtime suite; that package is not installed in the current execution environment. The repository also includes reference/source tests so deterministic arithmetic and safety structure were still checked.
 
-Current release status: the original StudioNet deployment `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b` (`0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`) has a verified live lifecycle: project 1 finalized with receipt txs `0xcab4b355976ea66f3b97ef106a8b9b58bb45914d38c3f0994916ccb6543db69a` and `0x6d08c17230e4fe8938c5972a56d1bf3d37afff4692931ae0f8d0f1008199d8b3`, totaling exactly 10,000 bps. The hardened digest/candidate-memory source is separately deployed at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` with tx `0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`; its schema is verified, but no lifecycle is claimed for that new address. Official explorer: https://genlayer-explorer.vercel.app. No hosted frontend deployment or hosted injected-wallet write is claimed.
+Current release status: the canonical StudioNet contract is the hardened deployment `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (`0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`), with verified digest/candidate-memory guards and schema. Its project 1 lifecycle reached `ABSTAINED` with `total_bps=0`; no hardened 10,000-bps receipt is claimed. The older `0xaABd...` deployment and its 10,000-bps receipt are superseded and are not the production contract. Official StudioNet explorer: https://explorer-studio.genlayer.com. Production frontend: https://studiosplit-web.vercel.app, live-read verified against the hardened address.
 
 ## Remaining release gates
 
-The current environment could not install npm dependencies or access the GenLayer deployment/test CLI, so the following are **not** claimed:
+The current release has completed the build, deployment, route, and hosted read gates. The following remain:
 
 - `genvm-lint` pass;
-- real GenLayer direct-runtime pass;
-- frontend dependency-backed TypeScript/lint/production build pass;
-- StudioNet deployment;
-- live consensus transaction;
+- compatible-runner completion of the real GenLayer direct-runtime/adversarial suite;
+- hardened-contract lifecycle receipt totaling 10,000 bps;
 - hosted injected-wallet write proof.
 
 See `DEPLOYMENT.md` and `handoff.md` for the exact remaining release gates.
