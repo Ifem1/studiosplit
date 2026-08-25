@@ -38,7 +38,7 @@ def test_core_safety_guards_are_present_in_deployable_source():
 def test_consensus_payload_uses_actual_checkpoint_ids_not_local_positions():
     assert '"checkpoint_id": checkpoint_id' in TEXT
     assert 'for checkpoint_id, cp in zip(checkpoint_ids, checkpoints)' in TEXT
-    assert 'for checkpoint_id, cp in zip(checkpoint_ids, checkpoints):\n                    text = gl.nondet.web.render(cp.artifact_url, mode="text")' in TEXT
+    assert 'for checkpoint_id, cp in zip(checkpoint_ids, checkpoints):\n                    text = gl.nondet.web.get(cp.artifact_url).body.decode("utf-8")' in TEXT
     assert 'f"checkpoint {checkpoint_id} evidence"' in TEXT
     assert 'cp.checkpoint_id' not in TEXT
     assert '"checkpoint_id": idx + 1' not in TEXT
