@@ -1,0 +1,45 @@
+from pathlib import Path
+import ast
+
+SOURCE = Path(__file__).parents[2] / "contracts" / "studiosplit.py"
+TEXT = SOURCE.read_text()
+TREE = ast.parse(TEXT)
+
+
+def method_names() -> set[str]:
+    for node in TREE.body:
+        if isinstance(node, ast.ClassDef) and node.name == "StudioSplit":
+            return {n.name for n in node.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+    return set()
+
+
+def test_required_backendless_contract_surface_exists():
+    required = {
+        "create_project", "add_collaborator", "submit_checkpoint", "request_finalization",
+        "adjudicate_finalization", "cancel_finalization", "get_project_count", "get_project",
+        "list_projects", "list_collaborators", "get_checkpoint", "list_checkpoints",
+        "get_finalization", "get_split", "preview_overlaps",
+    }
+    assert required <= method_names()
+
+
+def test_core_safety_guards_are_present_in_deployable_source():
+    assert '"registered collaborator only"' in TEXT
+    assert 'assert total > 0, "cannot normalize zero scores"' in TEXT
+    assert '== 10000, "split normalization failed"' in TEXT
+    assert 'outcome in ("FINALIZE", "ABSTAIN")' in TEXT
+    assert "cross-namespace memory id" in TEXT
+    assert "project_version" in TEXT and "dimension_code" in TEXT
+    assert "Do not output percentages or basis points" in TEXT
+
+
+def test_consensus_payload_uses_actual_checkpoint_ids_not_local_positions():
+    assert '"checkpoint_id": checkpoint_id' in TEXT
+    assert 'for checkpoint_id, cp in zip(checkpoint_ids, checkpoints)' in TEXT
+    assert '"checkpoint_id": idx + 1' not in TEXT
+
+
+def test_no_private_key_or_server_signer_path_in_contract():
+    lowered = TEXT.lower()
+    assert "private_key" not in lowered
+    assert "seed phrase" not in lowered

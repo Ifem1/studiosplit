@@ -4,10 +4,10 @@
 
 ## Current checkpoint
 
-- **Phase:** Implementation — architecture reconciled to contract + frontend only.
-- **Last completed work:** Blueprint copied into the implementation tree and backend/database requirements removed.
-- **Next exact action:** Implement the contract storage/API, VecDB path and deterministic guards.
-- **Known blockers:** None yet. Runtime/API mismatches discovered later must be logged rather than guessed around.
+- **Phase:** Contract + frontend implemented locally; GitHub publication in progress; runtime/deployment proof pending.
+- **Last completed work:** Local contract/frontend implementation and source-level verification completed.
+- **Next exact action:** Publish the exact prepared tree to `Ifem1/studiosplit`, then run official dependency/runtime/StudioNet proof gates.
+- **Known blockers:** GenLayer runtime/deployment tooling and npm dependency installation are unavailable in the current container.
 - **StudioNet address:** Not deployed.
 - **Deployment commit:** Not available.
 - **Frontend URL:** Not deployed.
@@ -218,3 +218,31 @@ Copy this block for every meaningful work unit:
 
 **Next exact action**
 - Push the prepared tree once GitHub connector access resolves, then perform official runtime/build/StudioNet proof gates.
+
+
+### 2026-08-25 00:49 +01:00 — GitHub access restored and repository verified
+
+**Goal**
+- Re-check the requested GitHub destination and publish the prepared StudioSplit tree.
+
+**Changed**
+- Verified `Ifem1/studiosplit` exists, is public, uses `main`, and the connected GitHub identity has admin/push permission.
+- Removed the generated `apps/web/tsconfig.tsbuildinfo` cache before publication.
+
+**Verification**
+- GitHub repository metadata lookup: PASS.
+- Repository permissions: admin/push confirmed.
+- Repository was empty at verification time; a root commit was created so `main` could be initialized.
+
+**Reality check**
+- GitHub connectivity is no longer a blocker.
+- StudioNet deployment, live consensus, dependency-backed frontend build and hosted frontend remain unproven.
+
+**Decisions**
+- Publish source only; do not commit generated TypeScript build cache.
+
+**Blockers / risks**
+- None for GitHub publication. Runtime/deployment proof gates remain external.
+
+**Next exact action**
+- Complete the GitHub tree publication and record the resulting commit SHA.
