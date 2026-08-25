@@ -4,11 +4,12 @@
 
 ## Current checkpoint
 
-- **Phase:** Contract + frontend implemented locally; GitHub publication in progress; runtime/deployment proof pending.
-- **Last completed work:** Local contract/frontend implementation and source-level verification completed.
-- **Next exact action:** Publish the exact prepared tree to `Ifem1/studiosplit`, then run official dependency/runtime/StudioNet proof gates.
+- **Phase:** Contract + frontend published to GitHub; runtime/deployment proof pending.
+- **Last completed work:** Exact prepared contract + frontend tree published and verified on `Ifem1/studiosplit` `main`.
+- **Next exact action:** Run official dependency/runtime/StudioNet proof gates against the published `main` source.
 - **Known blockers:** GenLayer runtime/deployment tooling and npm dependency installation are unavailable in the current container.
 - **StudioNet address:** Not deployed.
+- **GitHub publication commit:** `739531a25c5a69aeea7328aba79ea389a9482355`.
 - **Deployment commit:** Not available.
 - **Frontend URL:** Not deployed.
 
@@ -246,3 +247,28 @@ Copy this block for every meaningful work unit:
 
 **Next exact action**
 - Complete the GitHub tree publication and record the resulting commit SHA.
+
+
+### 2026-08-25 01:15 +01:00 — GitHub publication verified
+
+**Goal**
+- Publish the exact prepared StudioSplit contract + frontend tree to `Ifem1/studiosplit`.
+
+**Changed**
+- Published the contract + frontend source and removed temporary bootstrap transfer files.
+
+**Verification**
+- Final source commit: `739531a25c5a69aeea7328aba79ea389a9482355`.
+- Direct GitHub re-read confirmed `contracts/studiosplit.py` and `apps/web/app/page.tsx`.
+
+**Reality check**
+- GitHub publication is proven. StudioNet deployment, live consensus and hosted frontend remain unproven.
+
+**Decisions**
+- None.
+
+**Blockers / risks**
+- GenLayer runtime/deployment tooling and dependency-backed frontend build still need a suitable environment.
+
+**Next exact action**
+- Run GenVM/direct/frontend release checks and deploy the frozen GitHub source to StudioNet.

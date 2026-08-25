@@ -22,8 +22,8 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 
 ## Current status
 
-**Phase:** Local implementation complete; runtime/deployment proof pending  
-**Code status:** Contract + backendless frontend implemented locally  
+**Phase:** GitHub-published implementation; runtime/deployment proof pending  
+**Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`  
 **StudioNet contract:** Not deployed yet  
 **Live frontend:** Not deployed yet  
 **Last durable update:** 2026-08-25
