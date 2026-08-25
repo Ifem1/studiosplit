@@ -30,6 +30,8 @@ def test_core_safety_guards_are_present_in_deployable_source():
     assert 'outcome in ("FINALIZE", "ABSTAIN")' in TEXT
     assert "cross-namespace memory id" in TEXT
     assert "project_version" in TEXT and "dimension_code" in TEXT
+    assert "_verify_evidence_digest" in TEXT
+    assert "memory ref was not retrieved as a candidate" in TEXT
     assert "Do not output percentages or basis points" in TEXT
 
 

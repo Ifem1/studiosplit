@@ -6,7 +6,7 @@ With the dependency installed, pytest's direct_vm/direct_deploy fixtures execute
 import json
 import pytest
 
-pytest.importorskip("genlayer_test", reason="official GenLayer direct-test runtime is not installed")
+pytest.importorskip("gltest", reason="official GenLayer direct-test runtime is not installed")
 
 RUBRIC = json.dumps({"dimensions": [
     {"code": "WRITING", "weight": 30},
@@ -44,3 +44,25 @@ def test_unregistered_wallet_cannot_checkpoint(direct_vm, direct_deploy, direct_
             "WRITING",
             "A bounded contribution description that is long enough.",
         )
+
+
+def test_invalid_evidence_digest_is_rejected(direct_vm, direct_deploy, direct_alice):
+    contract = direct_deploy("contracts/studiosplit.py")
+    direct_vm.sender = direct_alice
+    contract.create_project("Digest guard", "https://example.com/charter-v1.txt", DIGEST, RUBRIC)
+    with direct_vm.expect_revert("artifact digest must be sha256"):
+        contract.submit_checkpoint(
+            1,
+            "https://example.com/evidence-v1.txt",
+            "sha256:" + "b" * 63,
+            "WRITING",
+            "A bounded contribution description that is long enough.",
+        )
+
+
+def test_duplicate_collaborator_is_rejected(direct_vm, direct_deploy, direct_alice):
+    contract = direct_deploy("contracts/studiosplit.py")
+    direct_vm.sender = direct_alice
+    contract.create_project("Collaborator guard", "https://example.com/charter-v1.txt", DIGEST, RUBRIC)
+    with direct_vm.expect_revert("collaborator already registered"):
+        contract.add_collaborator(1, direct_alice.as_hex, "Duplicate")

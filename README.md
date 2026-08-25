@@ -75,7 +75,7 @@ npm run build                                         PASS
 
 The single skipped direct suite is the real `genlayer-test` runtime suite; that package is not installed in the current execution environment. The repository also includes reference/source tests so deterministic arithmetic and safety structure were still checked.
 
-StudioNet deployment is verified at `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b` with deployment transaction `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`; the deployed schema exposes the required 15 methods. A successful live project lifecycle and hosted frontend are not claimed yet.
+Current release status: the original StudioNet deployment `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b` (`0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`) has a verified live lifecycle: project 1 finalized with receipt txs `0xcab4b355976ea66f3b97ef106a8b9b58bb45914d38c3f0994916ccb6543db69a` and `0x6d08c17230e4fe8938c5972a56d1bf3d37afff4692931ae0f8d0f1008199d8b3`, totaling exactly 10,000 bps. The hardened digest/candidate-memory source is separately deployed at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` with tx `0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`; its schema is verified, but no lifecycle is claimed for that new address. Official explorer: https://genlayer-explorer.vercel.app. No hosted frontend deployment or hosted injected-wallet write is claimed.
 
 ## Not yet proven
 

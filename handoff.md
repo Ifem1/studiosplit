@@ -289,3 +289,11 @@ Copy this block for every meaningful work unit:
 - Deployment contract: `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`; deployment tx: `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`; receipt showed `MAJORITY_AGREE` and GenVM `SUCCESS`; deployed schema verified with 15 required methods.
 - Live writes were attempted with the CLI. Invalid/malformed rubric and URL calldata failed closed with explicit contract errors. A successful project lifecycle and exact 10,000-bps live receipt are not claimed because the current CLI parser did not preserve the contract's rubric JSON string format.
 - No hosted frontend deployment or hosted-UI write is claimed; no hosting credentials are configured.
+
+### 2026-08-25 — Hardened evidence and live receipt
+
+- Added SHA-256 verification for fetched release/checkpoint evidence and restricted returned `memory_ids` to the actual filtered KNN candidate set.
+- Added runtime test cases for invalid digest and duplicate collaborator, plus source assertions for digest/candidate authorization. `genlayer-test` 0.29.2 is installed; Windows direct-loader execution is blocked by its temporary-stdin unlink `WinError 32`, so those runtime cases remain unexecuted in this environment.
+- Added `scripts/live-studionet-lifecycle.mjs`, which bypasses the CLI JSON-string issue using a single encoded rubric argv token. On the original `0xaABd...` deployment, project 1 was created, checkpointed, finalized, and read back at exactly 10,000 bps. Finalization txs: `0xcab4b355976ea66f3b97ef106a8b9b58bb45914d38c3f0994916ccb6543db69a`, `0x6d08c17230e4fe8938c5972a56d1bf3d37afff4692931ae0f8d0f1008199d8b3`.
+- Deployed hardened source separately at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde`, tx `0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`; receipt GenVM `SUCCESS`, schema verified.
+- Frontend hosting and hosted injected-wallet interaction remain incomplete; no authenticated Vercel deployment is available.

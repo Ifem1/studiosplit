@@ -18,6 +18,7 @@ There is no backend/database authority and no model-generated percentage.
 
 from dataclasses import dataclass
 import json
+import hashlib
 import typing
 import numpy as np
 from genlayer import *
@@ -215,6 +216,10 @@ class StudioSplit(gl.Contract):
         for ch in hex_part:
             assert ch in "0123456789abcdef", "artifact digest must be hex"
         return "sha256:" + hex_part
+
+    def _verify_evidence_digest(self, content: str, expected: str, field: str) -> None:
+        actual = "sha256:" + hashlib.sha256(content.encode("utf-8")).hexdigest()
+        assert actual == expected, f"{field} digest mismatch"
 
     def _parse_rubric(self, rubric_json: str) -> list[dict]:
         assert 2 <= len(rubric_json) <= MAX_RUBRIC_JSON, "invalid rubric length"
@@ -555,11 +560,13 @@ class StudioSplit(gl.Contract):
         checkpoints = [self._checkpoint(i) for i in checkpoint_ids]
 
         overlap_context: list[dict] = []
+        retrieved_memory_ids: set[int] = set()
         for collab in collaborators:
             for dimension in dimensions:
                 rows = self._preview_overlap_records(project_id, collab.wallet, dimension["code"], 2)
                 for row in rows:
                     overlap_context.append(row)
+                    retrieved_memory_ids.add(int(row["checkpoint_id"]))
                     if len(overlap_context) >= 24:
                         break
                 if len(overlap_context) >= 24:
@@ -594,6 +601,7 @@ class StudioSplit(gl.Contract):
             fetched: list[dict] = []
             try:
                 release_text = gl.nondet.web.render(record.release_url, mode="text")
+                self._verify_evidence_digest(release_text, record.release_digest, "release evidence")
                 fetched.append({
                     "kind": "release",
                     "url": record.release_url,
@@ -602,6 +610,7 @@ class StudioSplit(gl.Contract):
                 })
                 for cp in checkpoints:
                     text = gl.nondet.web.render(cp.artifact_url, mode="text")
+                    self._verify_evidence_digest(text, cp.artifact_digest, f"checkpoint {int(cp.checkpoint_id)} evidence")
                     fetched.append({
                         "kind": "checkpoint",
                         "url": cp.artifact_url,
@@ -676,6 +685,7 @@ Independently assess the same public evidence and contribution claims. Accept on
         assert isinstance(memory_ids, list) and len(memory_ids) <= 24, "invalid memory refs"
         for memory_id in memory_ids:
             assert isinstance(memory_id, int) and 1 <= memory_id <= int(self.checkpoint_count), "invalid memory id"
+            assert memory_id in retrieved_memory_ids, "memory ref was not retrieved as a candidate"
             cp = self._checkpoint(memory_id)
             assert int(cp.project_id) == project_id and int(cp.project_version) == int(project.version), "cross-namespace memory id"
 
