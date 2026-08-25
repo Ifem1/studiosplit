@@ -1,0 +1,5 @@
+.pytest_cache
+artifacts
+node_modules
+apps/web/.next
+*.tsbuildinfo

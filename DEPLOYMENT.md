@@ -5,7 +5,7 @@ StudioSplit has two immutable StudioNet deployments relevant to this release.
 - Contract: `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`
 - Deployment transaction: `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`
 - Deployment result: `MAJORITY_AGREE`; leader and agreeing validators reported GenVM `SUCCESS`
-- Explorer: https://genlayer-explorer.vercel.app
+- Official StudioNet explorer: https://explorer-studio.genlayer.com
 - Deployed schema: verified; 15 required methods present
 
 The original address above has the verified live project lifecycle. Project 1 was created by `0x16c97554913166697b990467607a03c967584d8b6e973ab356412c89dd6a885b` and finalized by `0xcab4b355976ea66f3b97ef106a8b9b58bb45914d38c3f0994916ccb6543db69a` and `0x6d08c17230e4fe8938c5972a56d1bf3d37afff4692931ae0f8d0f1008199d8b3`; the authoritative receipt total is 10,000 bps.
@@ -31,4 +31,4 @@ The hardened source with evidence digest verification and retrieved-candidate me
 7. Install frontend dependencies and run typecheck/lint/build.
 8. Use the hosted browser with an injected wallet to execute create → collaborators → checkpoints → overlap → finalization → receipt.
 9. For every write, verify `FINALIZED` plus `txExecutionResultName === FINISHED_WITH_RETURN`, then re-read chain state.
-10. The CLI account and StudioNet RPC were verified. The JSON-string issue was bypassed with `scripts/live-studionet-lifecycle.mjs`, which uses a single correctly encoded argv token. No hosted frontend or hosted-UI write is claimed because no authenticated hosting deployment completed.
+10. The CLI account and StudioNet RPC were verified. The JSON-string issue was bypassed with `scripts/live-studionet-lifecycle.mjs`, which uses a correctly encoded argv token. Vercel deployment is READY; browser testing confirmed fail-closed wallet detection, so no hosted write is claimed.

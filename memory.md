@@ -22,10 +22,10 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 
 ## Current status
 
-**Phase:** GitHub-published implementation; runtime/deployment proof pending  
+**Phase:** StudioNet live receipt and hosted read deployment verified; runtime runner and hosted wallet-write proof pending  
 **Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`  
-**StudioNet contract:** Not deployed yet  
-**Live frontend:** Not deployed yet  
+**StudioNet contract:** Original live address plus separately deployed hardened address; see authoritative status below
+**Live frontend:** https://web-three-teal-52.vercel.app (READY; live read verified)
 **Last durable update:** 2026-08-25
 
 The first implementing agent must not invent fake deployment addresses, transaction hashes, test counts or live URLs. Add them here only after they exist and have been verified.
