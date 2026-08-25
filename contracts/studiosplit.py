@@ -127,6 +127,46 @@ class VectorPointer:
     project_version: u16
 
 
+def _normalize_decision_candidate(candidate: dict, expected_pairs: list[str]) -> dict:
+    """Return only the deterministic fields validators must compare."""
+    assert isinstance(candidate, dict), "malformed consensus response"
+    outcome = candidate.get("outcome")
+    assert outcome in ("FINALIZE", "ABSTAIN"), "invalid outcome"
+    bands = candidate.get("bands")
+    assert isinstance(bands, list), "bands required"
+    if outcome == "ABSTAIN":
+        assert len(bands) == 0, "abstention must not include bands"
+        return {"outcome": outcome, "bands": []}
+
+    assert len(bands) == len(expected_pairs), "incomplete band matrix"
+    allowed_relations = ("NORMAL", "DUPLICATIVE", "DEPENDENT")
+    seen_pairs: set[str] = set()
+    normalized_rows: list[dict] = []
+    for row in bands:
+        assert isinstance(row, dict), "invalid band row"
+        wallet = row.get("wallet")
+        dimension = row.get("dimension")
+        band = row.get("band")
+        relation = row.get("relation")
+        assert isinstance(wallet, str) and isinstance(dimension, str), "invalid band identity"
+        wallet = wallet.strip().lower()
+        dimension = dimension.strip().upper()
+        pair = f"{wallet}|{dimension}"
+        assert pair in expected_pairs and pair not in seen_pairs, "invented or duplicate band pair"
+        assert isinstance(band, int) and not isinstance(band, bool) and 0 <= band <= 5, "invalid band"
+        assert relation in allowed_relations, "invalid relation"
+        seen_pairs.add(pair)
+        normalized_rows.append({
+            "wallet": wallet,
+            "dimension": dimension,
+            "band": band,
+            "relation": relation,
+        })
+    assert sorted(seen_pairs) == expected_pairs, "band matrix does not cover frozen set"
+    normalized_rows.sort(key=lambda row: f"{row['wallet']}|{row['dimension']}")
+    return {"outcome": outcome, "bands": normalized_rows}
+
+
 class StudioSplit(gl.Contract):
     projects: TreeMap[u256, Project]
     collaborators: TreeMap[str, Collaborator]
@@ -596,7 +636,7 @@ class StudioSplit(gl.Contract):
             for d in dimensions
         )
 
-        def leader() -> str:
+        def evaluate_candidate() -> dict:
             # Public evidence is untrusted data. Fetch only bounded excerpts.
             fetched: list[dict] = []
             try:
@@ -618,15 +658,11 @@ class StudioSplit(gl.Contract):
                         "excerpt": text[:MAX_EVIDENCE_CHARS],
                     })
             except Exception as exc:
-                return json.dumps(
-                    {
-                        "outcome": "ABSTAIN",
-                        "bands": [],
-                        "reason": f"Public evidence unavailable: {str(exc)[:180]}",
-                    },
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                return {
+                    "outcome": "ABSTAIN",
+                    "bands": [],
+                    "reason": f"Public evidence unavailable: {str(exc)[:180]}",
+                }
 
             prompt = f"""
 You are adjudicating StudioSplit contribution credit for one frozen creative-project version.
@@ -664,18 +700,29 @@ Return ONLY JSON with this exact shape:
 }}
 For FINALIZE, bands must contain exactly one row for every expected pair and no extras.
 """
-            raw = gl.nondet.exec_prompt(prompt)
-            return raw.replace("```json", "").replace("```", "").strip()
+            raw = gl.nondet.exec_prompt(prompt, response_format="json")
+            if isinstance(raw, dict):
+                return raw
+            assert isinstance(raw, str), "malformed consensus response"
+            return json.loads(raw.replace("```json", "").replace("```", "").strip())
 
-        criteria = """
-Independently assess the same public evidence and contribution claims. Accept only if the leader's decision-critical output is semantically equivalent: same FINALIZE vs ABSTAIN outcome; for FINALIZE, the same collaborator/dimension band assignments (0..5) and relation flags where overlap is decision-relevant. Reject invented wallets or dimensions, missing matrix rows, inaccessible evidence treated as positive proof, or percentages authored by the model. Rationale wording need not match. Retrieval provenance is contract-owned and must not be authored by the model.
-"""
-        agreed_raw = gl.eq_principle.prompt_comparative(leader, criteria)
-        assert len(agreed_raw) <= 14000, "consensus response too large"
-        result = json.loads(agreed_raw)
+        def leader_fn() -> dict:
+            return evaluate_candidate()
+
+        def validator_fn(leader_result) -> bool:
+            try:
+                if not isinstance(leader_result, gl.vm.Return):
+                    return False
+                leader_candidate = leader_result.calldata
+                validator_candidate = evaluate_candidate()
+                return _normalize_decision_candidate(leader_candidate, expected_pairs) == _normalize_decision_candidate(validator_candidate, expected_pairs)
+            except Exception:
+                return False
+
+        result = gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
         assert isinstance(result, dict), "malformed consensus response"
-        outcome = result.get("outcome")
-        assert outcome in ("FINALIZE", "ABSTAIN"), "invalid outcome"
+        normalized = _normalize_decision_candidate(result, expected_pairs)
+        outcome = normalized["outcome"]
         reason = result.get("reason", "")
         assert isinstance(reason, str), "invalid reason"
         reason = reason.strip()[:MAX_RATIONALE]
@@ -692,36 +739,24 @@ Independently assess the same public evidence and contribution claims. Accept on
             project.status = u8(STATUS_ABSTAINED)
             return {"status": "ABSTAINED", "split_total_bps": 0}
 
-        bands = result.get("bands")
-        assert isinstance(bands, list), "bands required"
-        assert len(bands) == len(expected_pairs), "incomplete band matrix"
-        seen_pairs: set[str] = set()
+        bands = normalized["bands"]
         scores: dict[str, int] = {self._address_hex(c.wallet): 0 for c in collaborators}
         normalized_rows: list[dict] = []
         allowed_relations = ("NORMAL", "DUPLICATIVE", "DEPENDENT")
         for row in bands:
-            assert isinstance(row, dict), "invalid band row"
             wallet = row.get("wallet")
             dimension = row.get("dimension")
             band = row.get("band")
             relation = row.get("relation")
-            assert isinstance(wallet, str) and isinstance(dimension, str), "invalid band identity"
             wallet = self._address_hex(Address(wallet))
-            dimension = dimension.strip().upper()
-            pair = f"{wallet}|{dimension}"
-            assert pair in expected_pairs and pair not in seen_pairs, "invented or duplicate band pair"
-            assert isinstance(band, int) and not isinstance(band, bool) and 0 <= band <= 5, "invalid band"
-            assert relation in allowed_relations, "invalid relation"
             weight = self._dimension_weight(project.rubric_json, dimension)
             scores[wallet] += weight * band
-            seen_pairs.add(pair)
             normalized_rows.append({
                 "wallet": wallet,
                 "dimension": dimension,
                 "band": band,
                 "relation": relation,
             })
-        assert sorted(seen_pairs) == expected_pairs, "band matrix does not cover frozen set"
         assert int(record.base_version) == int(project.version), "project changed during review"
         assert int(record.frozen_checkpoint_count) == int(project.checkpoint_count), "checkpoint set changed during review"
 

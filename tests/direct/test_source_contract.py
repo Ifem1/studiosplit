@@ -37,8 +37,11 @@ def test_validator_cannot_author_retrieval_provenance():
     assert '"memory_ids": [1,2]' not in TEXT
     assert 'result.get("memory_ids"' not in TEXT
     assert 'memory_ids = sorted(retrieved_memory_ids)' in TEXT
-    assert 'Retrieval provenance is contract-owned' in TEXT
     assert 'record.overlap_refs_json = json.dumps(memory_ids' in TEXT
+    assert "gl.eq_principle.prompt_comparative" not in TEXT
+    assert "gl.vm.run_nondet_unsafe" in TEXT
+    assert "_normalize_decision_candidate(leader_candidate, expected_pairs)" in TEXT
+    assert "_normalize_decision_candidate(validator_candidate, expected_pairs)" in TEXT
 
 
 def test_empty_candidate_set_is_stored_as_empty_provenance():
