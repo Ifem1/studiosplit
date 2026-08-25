@@ -147,3 +147,6 @@ At the end of every work session:
 2. Update this file only for durable decisions/status changes.
 3. Do not paste long implementation logs here; keep those in `handoff.md`.
 4. Never record secrets, private keys, seed phrases or private source material.
+## 2026-08-25 release audit status
+
+The repository was cloned and audited. The real contract/frontend source exists; interrupted `.bootstrap2/part-10` transfer residue was removed. Verified: Python contract compilation, source schema (15/15), direct tests (7 passed, 1 skipped), and frontend source tests (4 passed). `npm install` stalled in the current environment, so dependency-backed typecheck/lint/production build are not claimed. No StudioNet deployment, live transaction evidence, or hosted frontend URL is claimed.

@@ -408,7 +408,8 @@ A common baseline:
 {
   "ok": true,
   "decision": "<ALLOWED_ENUM>",
-  "confidence_band": "HIGH|MEDIUM|LOW",
+  "band": "NONE|MINOR|SUPPORTING|MATERIAL|LEADING|DEFINING",
+  "relation": "NORMAL|DUPLICATIVE|DEPENDENT",
   "memory_ids": ["..."],
   "critical_ids": ["..."],
   "reason": "<bounded prose>"

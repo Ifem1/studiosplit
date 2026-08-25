@@ -272,3 +272,11 @@ Copy this block for every meaningful work unit:
 
 **Next exact action**
 - Run GenVM/direct/frontend release checks and deploy the frozen GitHub source to StudioNet.
+### 2026-08-25 — Release audit continuation
+
+- Re-audited the cloned `main` history and repository tree; the real contract/frontend source is present.
+- Removed the interrupted transfer residue `.bootstrap2/part-10`.
+- Corrected the TRD consensus example to use fixed contribution bands and relationship enums, not a confidence field.
+- Verified `python -m py_compile contracts/studiosplit.py`, `node scripts/verify-schema.mjs`, direct tests (`7 passed, 1 skipped`) and frontend source tests (`4 passed`).
+- Attempted `npm install`; it stalled without installing dependencies. Consequently TypeScript, ESLint and Next production build remain unverified because `tsc`, `eslint` and `next` are unavailable.
+- StudioNet deployment, live lifecycle evidence and hosted frontend remain unproven until deployment credentials/tooling and a reachable npm/GenLayer environment are available.
