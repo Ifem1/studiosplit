@@ -47,6 +47,8 @@ def test_consensus_payload_uses_actual_checkpoint_ids_not_local_positions():
 def test_evidence_fetch_failure_is_explicit_and_distinct_from_abstention():
     assert '"reason": f"Public evidence unavailable: {str(exc)[:180]}"' in TEXT
     assert 'reason or "Validators abstained because evidence was insufficient."' in TEXT
+    assert 'gl.nondet.web.get(record.release_url).body.decode("utf-8")' in TEXT
+    assert 'gl.nondet.web.get(cp.artifact_url).body.decode("utf-8")' in TEXT
 
 
 def test_no_private_key_or_server_signer_path_in_contract():

@@ -600,7 +600,7 @@ class StudioSplit(gl.Contract):
             # Public evidence is untrusted data. Fetch only bounded excerpts.
             fetched: list[dict] = []
             try:
-                release_text = gl.nondet.web.render(record.release_url, mode="text")
+                release_text = gl.nondet.web.get(record.release_url).body.decode("utf-8")
                 self._verify_evidence_digest(release_text, record.release_digest, "release evidence")
                 fetched.append({
                     "kind": "release",
@@ -609,7 +609,7 @@ class StudioSplit(gl.Contract):
                     "excerpt": release_text[:MAX_EVIDENCE_CHARS],
                 })
                 for checkpoint_id, cp in zip(checkpoint_ids, checkpoints):
-                    text = gl.nondet.web.render(cp.artifact_url, mode="text")
+                    text = gl.nondet.web.get(cp.artifact_url).body.decode("utf-8")
                     self._verify_evidence_digest(text, cp.artifact_digest, f"checkpoint {checkpoint_id} evidence")
                     fetched.append({
                         "kind": "checkpoint",
