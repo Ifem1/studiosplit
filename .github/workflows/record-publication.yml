@@ -1,0 +1,64 @@
+name: Record StudioSplit publication
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    if: github.event.head_commit.message == 'Record GitHub publication status'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Update repository truth
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          handoff = Path('handoff.md')
+          s = handoff.read_text()
+          s = s.replace(
+              '- **Phase:** Contract + frontend implemented locally; GitHub publication in progress; runtime/deployment proof pending.',
+              '- **Phase:** Contract + frontend published to GitHub; runtime/deployment proof pending.'
+          )
+          s = s.replace(
+              '- **Last completed work:** Local contract/frontend implementation and source-level verification completed.',
+              '- **Last completed work:** Exact prepared contract + frontend tree published and verified on `Ifem1/studiosplit` `main`.'
+          )
+          s = s.replace(
+              '- **Next exact action:** Publish the exact prepared tree to `Ifem1/studiosplit`, then run official dependency/runtime/StudioNet proof gates.',
+              '- **Next exact action:** Run official dependency/runtime/StudioNet proof gates against the published `main` source.'
+          )
+          s = s.replace(
+              '- **Deployment commit:** Not available.',
+              '- **GitHub publication commit:** `739531a25c5a69aeea7328aba79ea389a9482355`.\n- **Deployment commit:** Not available.',
+              1
+          )
+          if '### 2026-08-25 01:15 +01:00 — GitHub publication verified' not in s:
+              s += '''\n\n### 2026-08-25 01:15 +01:00 — GitHub publication verified\n\n**Goal**\n- Publish the exact prepared StudioSplit contract + frontend tree to `Ifem1/studiosplit`.\n\n**Changed**\n- Published the contract + frontend source and removed temporary bootstrap transfer files.\n\n**Verification**\n- Final source commit: `739531a25c5a69aeea7328aba79ea389a9482355`.\n- Direct GitHub re-read confirmed `contracts/studiosplit.py` and `apps/web/app/page.tsx`.\n\n**Reality check**\n- GitHub publication is proven. StudioNet deployment, live consensus and hosted frontend remain unproven.\n\n**Decisions**\n- None.\n\n**Blockers / risks**\n- GenLayer runtime/deployment tooling and dependency-backed frontend build still need a suitable environment.\n\n**Next exact action**\n- Run GenVM/direct/frontend release checks and deploy the frozen GitHub source to StudioNet.\n'''
+          handoff.write_text(s)
+
+          memory = Path('memory.md')
+          m = memory.read_text()
+          m = m.replace(
+              '**Phase:** Local implementation complete; runtime/deployment proof pending',
+              '**Phase:** GitHub-published implementation; runtime/deployment proof pending'
+          )
+          m = m.replace(
+              '**Code status:** Contract + backendless frontend implemented locally',
+              '**Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`'
+          )
+          memory.write_text(m)
+          PY
+          rm -f .github/workflows/record-publication.yml
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs: record GitHub publication"
+          git push origin HEAD:main
