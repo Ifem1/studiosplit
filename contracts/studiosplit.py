@@ -622,7 +622,6 @@ class StudioSplit(gl.Contract):
                     {
                         "outcome": "ABSTAIN",
                         "bands": [],
-                        "memory_ids": [],
                         "reason": f"Public evidence unavailable: {str(exc)[:180]}",
                     },
                     separators=(",", ":"),
@@ -661,7 +660,6 @@ Return ONLY JSON with this exact shape:
   "bands": [
     {{"wallet":"0x...","dimension":"CODE","band":0,"relation":"NORMAL"}}
   ],
-  "memory_ids": [1,2],
   "reason": "bounded explanation"
 }}
 For FINALIZE, bands must contain exactly one row for every expected pair and no extras.
@@ -670,7 +668,7 @@ For FINALIZE, bands must contain exactly one row for every expected pair and no 
             return raw.replace("```json", "").replace("```", "").strip()
 
         criteria = """
-Independently assess the same public evidence and contribution claims. Accept only if the leader's decision-critical output is semantically equivalent: same FINALIZE vs ABSTAIN outcome; for FINALIZE, the same collaborator/dimension band assignments (0..5) and relation flags where overlap is decision-relevant. Reject invented wallets, dimensions, memory IDs, missing matrix rows, inaccessible evidence treated as positive proof, or percentages authored by the model. Rationale wording need not match.
+Independently assess the same public evidence and contribution claims. Accept only if the leader's decision-critical output is semantically equivalent: same FINALIZE vs ABSTAIN outcome; for FINALIZE, the same collaborator/dimension band assignments (0..5) and relation flags where overlap is decision-relevant. Reject invented wallets or dimensions, missing matrix rows, inaccessible evidence treated as positive proof, or percentages authored by the model. Rationale wording need not match. Retrieval provenance is contract-owned and must not be authored by the model.
 """
         agreed_raw = gl.eq_principle.prompt_comparative(leader, criteria)
         assert len(agreed_raw) <= 14000, "consensus response too large"
@@ -681,13 +679,9 @@ Independently assess the same public evidence and contribution claims. Accept on
         reason = result.get("reason", "")
         assert isinstance(reason, str), "invalid reason"
         reason = reason.strip()[:MAX_RATIONALE]
-        memory_ids = result.get("memory_ids", [])
-        assert isinstance(memory_ids, list) and len(memory_ids) <= 24, "invalid memory refs"
-        for memory_id in memory_ids:
-            assert isinstance(memory_id, int) and 1 <= memory_id <= int(self.checkpoint_count), "invalid memory id"
-            assert memory_id in retrieved_memory_ids, "memory ref was not retrieved as a candidate"
-            cp = self._checkpoint(memory_id)
-            assert int(cp.project_id) == project_id and int(cp.project_version) == int(project.version), "cross-namespace memory id"
+        # Retrieval provenance belongs to the contract, not the validator. The
+        # bounded, namespace-filtered VecDB scan above is the sole authority.
+        memory_ids = sorted(retrieved_memory_ids)
 
         if outcome == "ABSTAIN":
             record.status = u8(FINALIZATION_ABSTAINED)

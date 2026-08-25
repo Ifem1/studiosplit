@@ -28,11 +28,30 @@ def test_core_safety_guards_are_present_in_deployable_source():
     assert 'assert total > 0, "cannot normalize zero scores"' in TEXT
     assert '== 10000, "split normalization failed"' in TEXT
     assert 'outcome in ("FINALIZE", "ABSTAIN")' in TEXT
-    assert "cross-namespace memory id" in TEXT
     assert "project_version" in TEXT and "dimension_code" in TEXT
     assert "_verify_evidence_digest" in TEXT
-    assert "memory ref was not retrieved as a candidate" in TEXT
     assert "Do not output percentages or basis points" in TEXT
+
+
+def test_validator_cannot_author_retrieval_provenance():
+    assert '"memory_ids": [1,2]' not in TEXT
+    assert 'result.get("memory_ids"' not in TEXT
+    assert 'memory_ids = sorted(retrieved_memory_ids)' in TEXT
+    assert 'Retrieval provenance is contract-owned' in TEXT
+    assert 'record.overlap_refs_json = json.dumps(memory_ids' in TEXT
+
+
+def test_empty_candidate_set_is_stored_as_empty_provenance():
+    assert 'retrieved_memory_ids: set[int] = set()' in TEXT
+    assert 'memory_ids = sorted(retrieved_memory_ids)' in TEXT
+    assert 'json.dumps(memory_ids, separators=(",", ":"))' in TEXT
+
+
+def test_candidate_retrieval_remains_namespace_filtered():
+    assert 'if int(pointer.project_id) != project_id:' in TEXT
+    assert 'if int(pointer.project_version) != int(project.version):' in TEXT
+    assert 'if pointer.dimension_code != dimension_code:' in TEXT
+    assert 'retrieved_memory_ids.add(int(row["checkpoint_id"]))' in TEXT
 
 
 def test_consensus_payload_uses_actual_checkpoint_ids_not_local_positions():
