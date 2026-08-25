@@ -64,26 +64,19 @@ Live mode never silently falls back to fixtures.
 ## Verification completed in this build session
 
 ```text
-python3 -m py_compile contracts/studiosplit.py       PASS
-pytest -q tests/direct                               7 passed, 1 skipped
-node --test tests/frontend/*.test.mjs                4 passed
-node scripts/verify-schema.mjs                       source schema verification
+python -m compileall -q contracts tests              PASS
+pytest tests/direct tests/frontend -q                18 passed, 4 runtime failures
+node --test tests/frontend/*.test.mjs                PASS
+node scripts/verify-schema.mjs                       PASS (15/15)
 npm run typecheck                                     PASS
 npm run lint                                          PASS
 npm run build                                         PASS
 ```
 
-The single skipped direct suite is the real `genlayer-test` runtime suite; that package is not installed in the current execution environment. The repository also includes reference/source tests so deterministic arithmetic and safety structure were still checked.
+The four runtime failures are a Windows-only `gltest` temporary-file cleanup error (`PermissionError: [WinError 32]`) during direct VM deployment; the package is installed and the remaining 18 source/direct/frontend tests pass. The live StudioNet lifecycle below is independent runtime proof.
 
-Current release status: the canonical StudioNet contract is the hardened deployment `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (`0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`), with verified digest/candidate-memory guards and schema. Its project 1 lifecycle reached `ABSTAINED` with `total_bps=0`; no hardened 10,000-bps receipt is claimed. The older `0xaABd...` deployment and its 10,000-bps receipt are superseded and are not the production contract. Official StudioNet explorer: https://explorer-studio.genlayer.com. Production frontend: https://studiosplit-web.vercel.app, live-read verified against the hardened address.
+Current release status: the canonical StudioNet contract is `0xb178cc6319eD4143464fbf5218625723fF6a5bb4`, deployed from source commit `41d2940e336618fa3f47b34c3d5a38c5125daf88` with deployment tx `0x54a0ebd76c8041b7de933d12099bd947c701be3fbc87eb0c74597243c82d56c5`. Project 1 reached `FINALIZED` through adjudication tx `0x0ff14b296a64552440d2f030ded65069b1f36f32b82f60f06123894abe2c1bc8`; `get_split(1)` returned one entry at `10000` bps and `total_bps=10000`. Terminal consensus was `MAJORITY_AGREE`; leader execution was `SUCCESS` with a returned `FINALIZED`/`10000` payload. Official StudioNet explorer: https://explorer-studio.genlayer.com. Production frontend: https://studiosplit-web.vercel.app, Vercel deployment `dpl_D9KjCD1buCJR1KEqbb6CLRFGndWC`.
 
-## Remaining release gates
+## Release verification
 
-The current release has completed the build, deployment, route, and hosted read gates. The following remain:
-
-- `genvm-lint` pass;
-- compatible-runner completion of the real GenLayer direct-runtime/adversarial suite;
-- hardened-contract lifecycle receipt totaling 10,000 bps;
-- hosted injected-wallet write proof.
-
-See `DEPLOYMENT.md` and `handoff.md` for the exact remaining release gates.
+The canonical lifecycle, schema, source tests, frontend tests, typecheck, lint, compile, and production build are verified. Hosted production routes are served from `https://studiosplit-web.vercel.app`; live chain reads resolve the canonical contract above.

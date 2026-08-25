@@ -1,16 +1,12 @@
 # StudioSplit deployment truth
 
-The hardened deployment is the single canonical StudioSplit contract for this release. The original deployment is retained only as superseded historical evidence.
+The single canonical StudioSplit contract is `0xb178cc6319eD4143464fbf5218625723fF6a5bb4`, deployed from source commit `41d2940e336618fa3f47b34c3d5a38c5125daf88` with deployment tx `0x54a0ebd76c8041b7de933d12099bd947c701be3fbc87eb0c74597243c82d56c5`.
 
-- Contract: `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`
-- Deployment transaction: `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`
-- Deployment result: `MAJORITY_AGREE`; leader and agreeing validators reported GenVM `SUCCESS`
+- Deployment result: `MAJORITY_AGREE`; leader execution `SUCCESS` with returned `FINALIZED`/`10000` payload
 - Official StudioNet explorer: https://explorer-studio.genlayer.com
 - Deployed schema: verified; 15 required methods present
 
-The original address above is superseded historical evidence. Its project 1 receipt totaled 10,000 bps, but it is not the production contract.
-
-The canonical hardened source with evidence digest verification and retrieved-candidate memory authorization is deployed at `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde`, tx `0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`, with GenVM `SUCCESS` and verified schema. Its project 1 currently reads `ABSTAINED`, `total_bps=0`; a valid hardened 10,000-bps receipt is not claimed.
+Lifecycle evidence: create `0xcc100753d9bfa3c7ecd5b2d2db058e9a221d809fafcdbdf89432c03eb5908e58`; request finalization `0x951d63df7dc88d4fea2f17ee77a75194ccf509c8b0bac8632e410bd929225148`; adjudication `0x0ff14b296a64552440d2f030ded65069b1f36f32b82f60f06123894abe2c1bc8`. Five dimension checkpoints were committed before the request. Final project and finalization are `FINALIZED`; `get_split(1).total_bps=10000`.
 
 ## Target
 

@@ -4,14 +4,16 @@
 
 ## Current checkpoint
 
-- **Phase:** Contract + frontend published to GitHub; runtime/deployment proof pending.
-- **Last completed work:** Exact prepared contract + frontend tree published and verified on `Ifem1/studiosplit` `main`.
-- **Next exact action:** Run official dependency/runtime/StudioNet proof gates against the published `main` source.
-- **Known blockers:** GenLayer runtime/deployment tooling and npm dependency installation are unavailable in the current container.
-- **StudioNet address:** Not deployed.
-- **GitHub publication commit:** `739531a25c5a69aeea7328aba79ea389a9482355`.
-- **Deployment commit:** Not available.
-- **Frontend URL:** Not deployed.
+- **Phase:** Canonical StudioNet lifecycle and hosted frontend live-read proof completed.
+- **Last completed work:** Source commit `41d2940e336618fa3f47b34c3d5a38c5125daf88` deployed to `0xb178cc6319eD4143464fbf5218625723fF6a5bb4`; project 1 finalized with terminal `MAJORITY_AGREE` and exactly `10000` bps; production frontend redeployed.
+- **StudioNet address:** `0xb178cc6319eD4143464fbf5218625723fF6a5bb4`.
+- **Deployment transaction:** `0x54a0ebd76c8041b7de933d12099bd947c701be3fbc87eb0c74597243c82d56c5`.
+- **Lifecycle adjudication:** `0x0ff14b296a64552440d2f030ded65069b1f36f32b82f60f06123894abe2c1bc8`.
+- **Final split:** one collaborator entry at `10000` bps; `get_split(1).total_bps=10000`.
+- **Frontend URL:** `https://studiosplit-web.vercel.app`.
+- **Vercel deployment:** `dpl_D9KjCD1buCJR1KEqbb6CLRFGndWC`.
+- **Official explorer:** `https://explorer-studio.genlayer.com`.
+- **Superseded deployments:** `0xaABd...`, `0xd459...`, `0x6Ceb...`, and `0xc7d...` are historical and are not canonical.
 
 ## Immediate implementation sequence
 

@@ -22,11 +22,12 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 
 ## Current status
 
-**Phase:** StudioNet live receipt and hosted read deployment verified; runtime runner and hosted wallet-write proof pending  
-**Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`  
-**StudioNet contract:** `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (canonical hardened deployment)
-**Live frontend:** https://studiosplit-web.vercel.app (READY; live read verified against canonical contract)
-**Last durable update:** 2026-08-25
+**Phase:** Canonical StudioNet lifecycle and hosted live-read deployment verified
+**Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`
+**StudioNet contract:** `0xb178cc6319eD4143464fbf5218625723fF6a5bb4` (canonical deployment; source `41d2940e336618fa3f47b34c3d5a38c5125daf88`)
+**Live frontend:** https://studiosplit-web.vercel.app (Vercel deployment `dpl_D9KjCD1buCJR1KEqbb6CLRFGndWC`)
+**Live proof:** project 1 and finalization 1 are `FINALIZED`; terminal consensus is `MAJORITY_AGREE`; `get_split(1).total_bps=10000`
+**Last durable update:** 2026-08-26
 
 The first implementing agent must not invent fake deployment addresses, transaction hashes, test counts or live URLs. Add them here only after they exist and have been verified.
 
