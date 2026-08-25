@@ -608,9 +608,9 @@ class StudioSplit(gl.Contract):
                     "digest": record.release_digest,
                     "excerpt": release_text[:MAX_EVIDENCE_CHARS],
                 })
-                for cp in checkpoints:
+                for checkpoint_id, cp in zip(checkpoint_ids, checkpoints):
                     text = gl.nondet.web.render(cp.artifact_url, mode="text")
-                    self._verify_evidence_digest(text, cp.artifact_digest, f"checkpoint {int(cp.checkpoint_id)} evidence")
+                    self._verify_evidence_digest(text, cp.artifact_digest, f"checkpoint {checkpoint_id} evidence")
                     fetched.append({
                         "kind": "checkpoint",
                         "url": cp.artifact_url,
