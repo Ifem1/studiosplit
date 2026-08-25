@@ -1,54 +1,31 @@
-name: Bootstrap StudioSplit
+name: Publish StudioSplit source
 
 on:
   push:
     branches: [main]
-    paths:
-      - '.bootstrap2/**'
 
 permissions:
   contents: write
 
-concurrency:
-  group: studiosplit-bootstrap
-  cancel-in-progress: true
-
 jobs:
-  unpack:
+  publish:
+    if: github.event.head_commit.message == 'Bootstrap StudioSplit source'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Wait for complete payload
-        id: payload
+      - name: Restore exact source tree
         shell: bash
         run: |
-          expected=14
-          actual=$(find .bootstrap2 -maxdepth 1 -type f -name 'part-*' | wc -l)
-          if [[ "$actual" -eq "$expected" ]]; then
-            echo 'complete=true' >> "$GITHUB_OUTPUT"
-          else
-            echo 'complete=false' >> "$GITHUB_OUTPUT"
-          fi
-      - name: Unpack prepared repository
-        if: steps.payload.outputs.complete == 'true'
-        shell: bash
-        run: |
-          cat .bootstrap2/part-* | base64 --decode > /tmp/studiosplit.zip
-          rm -rf /tmp/studiosplit-unpack
-          mkdir -p /tmp/studiosplit-unpack
-          unzip -q /tmp/studiosplit.zip -d /tmp/studiosplit-unpack
-          cp -a /tmp/studiosplit-unpack/studiosplit-work/. .
-          rm -rf .bootstrap .bootstrap2
-          rm -f apps/web/tsconfig.tsbuildinfo
+          set -euo pipefail
+          cat .bootstrap/tar.*.b64 | base64 -d > /tmp/studiosplit.tar.xz
+          echo "70f8113d593b8674cd63f9826ca4a092931e6cc324df326e016b196e4b22dee4  /tmp/studiosplit.tar.xz" | sha256sum -c -
+          rm -rf .bootstrap
+          tar -xJf /tmp/studiosplit.tar.xz -C .
           rm -f .github/workflows/bootstrap.yml
-      - name: Commit prepared StudioSplit tree
-        if: steps.payload.outputs.complete == 'true'
-        shell: bash
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'feat: build StudioSplit contract and frontend'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publish StudioSplit source tree"
           git push origin HEAD:main
