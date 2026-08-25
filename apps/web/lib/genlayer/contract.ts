@@ -1,16 +1,15 @@
-import { TransactionStatus } from "genlayer-js/types";
+import { TransactionStatus, type CalldataEncodable } from "genlayer-js/types";
 import type { CheckpointRecord, CollaboratorRecord, FinalizationRecord, OverlapRecord, ProjectRecord, SplitRecord } from "../types";
 import { createInjectedClient } from "./client";
 import { requireContractAddress } from "./config";
 import { inspectFinalizedExecution } from "./execution";
 import { readClient } from "./read-client";
 
-async function read<T>(functionName: string, args: unknown[] = []): Promise<T> {
+async function read<T>(functionName: string, args: CalldataEncodable[] = []): Promise<T> {
   const value = await readClient.readContract({
     address: requireContractAddress(),
     functionName,
-    args,
-    stateStatus: "accepted"
+    args
   });
   return value as T;
 }
@@ -32,7 +31,7 @@ export type WriteUpdate = { stage: WriteStage; hash?: string; message: string };
 export async function verifiedWrite(
   expectedAddress: `0x${string}`,
   functionName: string,
-  args: unknown[],
+  args: CalldataEncodable[],
   onUpdate?: (update: WriteUpdate) => void
 ): Promise<{ hash: string }> {
   onUpdate?.({ stage: "awaiting_signature", message: "Awaiting injected-wallet signature." });
@@ -48,7 +47,6 @@ export async function verifiedWrite(
   const receipt = await readClient.waitForTransactionReceipt({
     hash,
     status: TransactionStatus.FINALIZED,
-    fullTransaction: false
   });
   const execution = inspectFinalizedExecution(receipt);
   if (!execution.ok) {

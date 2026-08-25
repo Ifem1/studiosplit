@@ -36,7 +36,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   // We inspect already-authorized accounts without requesting access. This is not auto-connect.
   useEffect(() => {
-    void refresh();
+    const timer = window.setTimeout(() => { void refresh(); }, 0);
     if (typeof window === "undefined" || !window.ethereum?.on) return;
     const onAccounts = () => void refresh();
     const onChain = () => void refresh();
@@ -45,6 +45,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     window.ethereum.on("chainChanged", onChain);
     window.ethereum.on("disconnect", onDisconnect);
     return () => {
+      window.clearTimeout(timer);
       window.ethereum?.removeListener?.("accountsChanged", onAccounts);
       window.ethereum?.removeListener?.("chainChanged", onChain);
       window.ethereum?.removeListener?.("disconnect", onDisconnect);

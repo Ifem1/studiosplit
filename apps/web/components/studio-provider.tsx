@@ -29,7 +29,10 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void refresh(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [refresh]);
 
   const value = useMemo(() => ({ data, provenance, error, loading, refresh }), [data, provenance, error, loading, refresh]);
   return <StudioContext.Provider value={value}>{children}</StudioContext.Provider>;

@@ -68,9 +68,14 @@ python3 -m py_compile contracts/studiosplit.py       PASS
 pytest -q tests/direct                               7 passed, 1 skipped
 node --test tests/frontend/*.test.mjs                4 passed
 node scripts/verify-schema.mjs                       source schema verification
+npm run typecheck                                     PASS
+npm run lint                                          PASS
+npm run build                                         PASS
 ```
 
 The single skipped direct suite is the real `genlayer-test` runtime suite; that package is not installed in the current execution environment. The repository also includes reference/source tests so deterministic arithmetic and safety structure were still checked.
+
+StudioNet deployment is verified at `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b` with deployment transaction `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`; the deployed schema exposes the required 15 methods. A successful live project lifecycle and hosted frontend are not claimed yet.
 
 ## Not yet proven
 

@@ -11,7 +11,7 @@ if (!/^0x[a-fA-F0-9]{40}$/.test(address || "")) {
   throw new Error("Set NEXT_PUBLIC_STUDIOSPLIT_CONTRACT to the verified StudioNet deployment.");
 }
 const client = createClient({ chain: studionet });
-const count = await client.readContract({ address, functionName: "get_project_count", args: [], stateStatus: "accepted" });
+const count = await client.readContract({ address, functionName: "get_project_count", args: [] });
 console.log("project_count", count);
-const projects = await client.readContract({ address, functionName: "list_projects", args: [0, 20], stateStatus: "accepted" });
+const projects = await client.readContract({ address, functionName: "list_projects", args: [0, 20] });
 console.log(JSON.stringify(projects, null, 2));

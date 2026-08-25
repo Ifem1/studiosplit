@@ -280,3 +280,12 @@ Copy this block for every meaningful work unit:
 - Verified `python -m py_compile contracts/studiosplit.py`, `node scripts/verify-schema.mjs`, direct tests (`7 passed, 1 skipped`) and frontend source tests (`4 passed`).
 - Attempted `npm install`; it stalled without installing dependencies. Consequently TypeScript, ESLint and Next production build remain unverified because `tsc`, `eslint` and `next` are unavailable.
 - StudioNet deployment, live lifecycle evidence and hosted frontend remain unproven until deployment credentials/tooling and a reachable npm/GenLayer environment are available.
+
+### 2026-08-25 — StudioNet deployment and frontend gate continuation
+
+- Installed the pinned npm workspace dependencies (374 packages) and fixed SDK typing, React effect linting, PostCSS syntax, and current GenLayer read API compatibility.
+- Passed TypeScript, ESLint, Next production build, frontend tests (4/4), direct tests (7 passed, 1 skipped), and read-only StudioNet smoke (`project_count 0`).
+- Deployed `contracts/studiosplit.py` from source commit `8ffd51da2524209e3f4df0196cad769d759eb5c0` to StudioNet chain 61999.
+- Deployment contract: `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`; deployment tx: `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`; receipt showed `MAJORITY_AGREE` and GenVM `SUCCESS`; deployed schema verified with 15 required methods.
+- Live writes were attempted with the CLI. Invalid/malformed rubric and URL calldata failed closed with explicit contract errors. A successful project lifecycle and exact 10,000-bps live receipt are not claimed because the current CLI parser did not preserve the contract's rubric JSON string format.
+- No hosted frontend deployment or hosted-UI write is claimed; no hosting credentials are configured.

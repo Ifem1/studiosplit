@@ -150,3 +150,7 @@ At the end of every work session:
 ## 2026-08-25 release audit status
 
 The repository was cloned and audited. The real contract/frontend source exists; interrupted `.bootstrap2/part-10` transfer residue was removed. Verified: Python contract compilation, source schema (15/15), direct tests (7 passed, 1 skipped), and frontend source tests (4 passed). `npm install` stalled in the current environment, so dependency-backed typecheck/lint/production build are not claimed. No StudioNet deployment, live transaction evidence, or hosted frontend URL is claimed.
+
+## 2026-08-25 deployment continuation
+
+Frontend dependencies installed successfully. TypeScript, ESLint, Next production build, frontend tests (4 passed), and direct tests (7 passed, 1 skipped) pass. StudioNet deployment is verified from source commit `8ffd51da2524209e3f4df0196cad769d759eb5c0`: contract `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`, deployment tx `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`, schema 15 methods. Read-only smoke returned project_count 0. Live lifecycle and hosted frontend remain unproven; CLI writes with malformed rubric/url were rejected fail-closed.
