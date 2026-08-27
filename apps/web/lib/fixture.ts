@@ -27,10 +27,10 @@ export const fixtureData: StudioData = {
   ],
   collaborators: {
     1: [
-      { wallet: "0x1111111111111111111111111111111111111111", role_label: "Writer / Director", active: true, checkpoint_count: 2 },
-      { wallet: "0x2222222222222222222222222222222222222222", role_label: "Producer", active: true, checkpoint_count: 2 },
-      { wallet: "0x3333333333333333333333333333333333333333", role_label: "Arranger", active: true, checkpoint_count: 1 },
-      { wallet: "0x4444444444444444444444444444444444444444", role_label: "Visual Editor", active: true, checkpoint_count: 1 }
+      { wallet: "0x1111111111111111111111111111111111111111", role_label: "Writer / Director", active: true, accepted: true, checkpoint_count: 2 },
+      { wallet: "0x2222222222222222222222222222222222222222", role_label: "Producer", active: true, accepted: true, checkpoint_count: 2 },
+      { wallet: "0x3333333333333333333333333333333333333333", role_label: "Arranger", active: true, accepted: true, checkpoint_count: 1 },
+      { wallet: "0x4444444444444444444444444444444444444444", role_label: "Visual Editor", active: true, accepted: true, checkpoint_count: 1 }
     ]
   },
   checkpoints: {

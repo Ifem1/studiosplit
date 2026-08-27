@@ -76,6 +76,7 @@ class Collaborator:
     wallet: Address
     role_label: str
     active: bool
+    accepted: bool
     checkpoint_count: u16
 
 
@@ -398,6 +399,7 @@ class StudioSplit(gl.Contract):
             wallet=creator,
             role_label="Creator",
             active=True,
+            accepted=True,
             checkpoint_count=u16(0),
         )
         self.collaborators[self._collab_key(project_id, creator)] = creator_collab
@@ -422,6 +424,7 @@ class StudioSplit(gl.Contract):
             wallet=address,
             role_label=role_label,
             active=True,
+            accepted=False,
             checkpoint_count=u16(0),
         )
         self.collaborator_index[self._collab_index_key(project_id, index)] = address
@@ -483,6 +486,16 @@ class StudioSplit(gl.Contract):
         return checkpoint_id
 
     @gl.public.write
+    def accept_collaboration(self, project_id: int) -> None:
+        """Record explicit collaborator consent for this project version."""
+        project = self._project(project_id)
+        assert int(project.status) in (STATUS_OPEN, STATUS_CHECKPOINTING), "project not accepting consent"
+        sender = gl.message.sender_address
+        collab = self.collaborators.get(self._collab_key(project_id, sender), None)
+        assert collab is not None and collab.active, "registered collaborator only"
+        collab.accepted = True
+
+    @gl.public.write
     def request_finalization(self, project_id: int, release_artifact_url: str, release_digest: str) -> int:
         project = self._project(project_id)
         self._require_creator(project)
@@ -490,6 +503,8 @@ class StudioSplit(gl.Contract):
         assert int(project.checkpoint_count) > 0, "no checkpoints"
         release_artifact_url = self._require_https_url(release_artifact_url, "release artifact url")
         release_digest = self._require_digest(release_digest)
+        for collab in self._collaborators_for_project(project_id):
+            assert collab.accepted, "all collaborators must accept before finalization"
 
         finalization_id = int(self.finalization_count) + 1
         self.finalizations[u256(finalization_id)] = Finalization(
@@ -509,6 +524,34 @@ class StudioSplit(gl.Contract):
         project.active_finalization_id = u256(finalization_id)
         self.finalization_count = u256(finalization_id)
         return finalization_id
+
+    @gl.public.write
+    def retry_finalization(self, finalization_id: int) -> int:
+        """Open a fresh adjudication attempt after an evidence/consensus abstention."""
+        previous = self._finalization(finalization_id)
+        project = self._project(int(previous.project_id))
+        self._require_creator(project)
+        assert int(previous.status) == FINALIZATION_ABSTAINED, "finalization is not retryable"
+        assert int(project.active_finalization_id) == finalization_id, "stale finalization"
+        assert int(project.checkpoint_count) == int(previous.frozen_checkpoint_count), "checkpoint set changed"
+        next_id = int(self.finalization_count) + 1
+        self.finalizations[u256(next_id)] = Finalization(
+            project_id=previous.project_id,
+            release_url=previous.release_url,
+            release_digest=previous.release_digest,
+            status=u8(FINALIZATION_REQUESTED),
+            base_version=previous.base_version,
+            frozen_checkpoint_count=previous.frozen_checkpoint_count,
+            band_matrix_json="",
+            overlap_refs_json="[]",
+            rationale="",
+            requested_at=self._now(),
+            resolved_at="",
+        )
+        project.status = u8(STATUS_FINALIZATION_REQUESTED)
+        project.active_finalization_id = u256(next_id)
+        self.finalization_count = u256(next_id)
+        return next_id
 
     @gl.public.write
     def cancel_finalization(self, finalization_id: int) -> None:
@@ -640,6 +683,14 @@ class StudioSplit(gl.Contract):
             # Public evidence is untrusted data. Fetch only bounded excerpts.
             fetched: list[dict] = []
             try:
+                charter_text = gl.nondet.web.get(project.charter_url).body.decode("utf-8")
+                self._verify_evidence_digest(charter_text, project.charter_digest, "charter evidence")
+                fetched.append({
+                    "kind": "charter",
+                    "url": project.charter_url,
+                    "digest": project.charter_digest,
+                    "excerpt": charter_text[:MAX_EVIDENCE_CHARS],
+                })
                 release_text = gl.nondet.web.get(record.release_url).body.decode("utf-8")
                 self._verify_evidence_digest(release_text, record.release_digest, "release evidence")
                 fetched.append({
@@ -839,6 +890,7 @@ For FINALIZE, bands must contain exactly one row for every expected pair and no 
                 "wallet": self._address_hex(c.wallet),
                 "role_label": c.role_label,
                 "active": c.active,
+                "accepted": c.accepted,
                 "checkpoint_count": int(c.checkpoint_count),
             })
         return result

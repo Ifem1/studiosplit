@@ -11,10 +11,12 @@ export const DATA_MODE = process.env.NEXT_PUBLIC_STUDIOSPLIT_DATA === "live" ? "
 export const REQUIRED_METHODS = [
   "create_project",
   "add_collaborator",
+  "accept_collaboration",
   "submit_checkpoint",
   "request_finalization",
   "adjudicate_finalization",
   "cancel_finalization",
+  "retry_finalization",
   "get_project_count",
   "get_project",
   "list_projects",

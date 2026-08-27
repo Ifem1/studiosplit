@@ -23,12 +23,14 @@ StudioSplit is intentionally **contract + frontend only**:
 
 - project creation with a fixed five-dimension rubric;
 - creator-controlled collaborator registration while OPEN;
+- explicit on-chain collaborator acceptance before finalization;
 - collaborator-only self-checkpointing;
 - artifact URL + SHA-256 binding;
 - contract-owned semantic overlap memory with project/version/dimension filters;
 - frozen finalization requests;
 - permissionless bounded consensus adjudication;
 - `FINALIZE` / `ABSTAIN` result validation;
+- retryable finalization after transient evidence or consensus abstention;
 - deterministic largest-remainder normalization to 10,000 bps;
 - backendless discovery/read views for projects, lanes, checkpoints, finalization and receipt.
 

@@ -29,6 +29,8 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 **Live proof:** project 1 and finalization 1 are `FINALIZED`; terminal consensus is `MAJORITY_AGREE`; `get_split(1).total_bps=10000`
 **Last durable update:** 2026-08-26
 
+**Steward hardening pending deployment:** the source now verifies charter provenance during adjudication, records collaborator acceptance on-chain, and provides `retry_finalization` after an abstention. The canonical deployed address above remains unchanged until this source is deployed and live-tested.
+
 The first implementing agent must not invent fake deployment addresses, transaction hashes, test counts or live URLs. Add them here only after they exist and have been verified.
 
 ## Non-negotiable product boundary

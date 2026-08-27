@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 
 const required = [
-  "create_project", "add_collaborator", "submit_checkpoint", "request_finalization",
+  "create_project", "add_collaborator", "accept_collaboration", "submit_checkpoint", "request_finalization",
+  "retry_finalization",
   "adjudicate_finalization", "cancel_finalization", "get_project_count", "get_project",
   "list_projects", "list_collaborators", "get_checkpoint", "list_checkpoints",
   "get_finalization", "get_split", "preview_overlaps"

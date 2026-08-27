@@ -35,6 +35,7 @@ export default function LanesPage() {
         <div className="channel-bank">
           {collaborators.map((c, index) => {
             const mine = checkpoints.filter(cp => cp.contributor.toLowerCase() === c.wallet.toLowerCase());
+            const accepting = wallet.address?.toLowerCase() === c.wallet.toLowerCase() && !c.accepted;
             return <article className="mixer-channel" key={c.wallet}>
               <div className="channel-number">CH {String(index+1).padStart(2,"0")}</div>
               <div className="knob" aria-hidden><i/></div>
@@ -42,6 +43,7 @@ export default function LanesPage() {
               <div className="dimension-leds">{dimensions.map(d => <span key={d.code} className={mine.some(cp => cp.dimension_code === d.code) ? "lit" : ""}>{d.code.replace("_"," ")}</span>)}</div>
               <div className="fader-track"><span style={{height:`${Math.min(88, 18 + mine.length*14)}%`}}/><i/></div>
               <strong>{mine.length}</strong><small>checkpoints</small>
+              {accepting ? <button type="button" onClick={async () => { try { setError(null); await verifiedWrite(wallet.address!, "accept_collaboration", [projectId], setTx); await studio.refresh(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Consent write failed."); } }}>Accept project</button> : <small>{c.accepted ? "consent recorded" : "awaiting consent"}</small>}
             </article>;
           })}
         </div>

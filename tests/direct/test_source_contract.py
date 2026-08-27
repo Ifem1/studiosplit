@@ -15,7 +15,8 @@ def method_names() -> set[str]:
 
 def test_required_backendless_contract_surface_exists():
     required = {
-        "create_project", "add_collaborator", "submit_checkpoint", "request_finalization",
+        "create_project", "add_collaborator", "accept_collaboration", "submit_checkpoint", "request_finalization",
+        "retry_finalization",
         "adjudicate_finalization", "cancel_finalization", "get_project_count", "get_project",
         "list_projects", "list_collaborators", "get_checkpoint", "list_checkpoints",
         "get_finalization", "get_split", "preview_overlaps",
@@ -31,6 +32,20 @@ def test_core_safety_guards_are_present_in_deployable_source():
     assert "project_version" in TEXT and "dimension_code" in TEXT
     assert "_verify_evidence_digest" in TEXT
     assert "Do not output percentages or basis points" in TEXT
+
+
+def test_charter_provenance_and_consent_are_authoritative():
+    assert 'gl.nondet.web.get(project.charter_url).body.decode("utf-8")' in TEXT
+    assert 'self._verify_evidence_digest(charter_text, project.charter_digest, "charter evidence")' in TEXT
+    assert 'accepted: bool' in TEXT
+    assert 'assert collab.accepted, "all collaborators must accept before finalization"' in TEXT
+    assert 'def accept_collaboration(self, project_id: int)' in TEXT
+
+
+def test_abstention_has_a_retryable_adjudication_path():
+    assert 'def retry_finalization(self, finalization_id: int)' in TEXT
+    assert 'assert int(previous.status) == FINALIZATION_ABSTAINED' in TEXT
+    assert 'project.status = u8(STATUS_FINALIZATION_REQUESTED)' in TEXT
 
 
 def test_validator_cannot_author_retrieval_provenance():

@@ -26,6 +26,7 @@ export type CollaboratorRecord = {
   wallet: `0x${string}`;
   role_label: string;
   active: boolean;
+  accepted: boolean;
   checkpoint_count: number;
 };
 

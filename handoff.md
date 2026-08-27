@@ -14,6 +14,7 @@
 - **Vercel deployment:** `dpl_D9KjCD1buCJR1KEqbb6CLRFGndWC`.
 - **Official explorer:** `https://explorer-studio.genlayer.com`.
 - **Superseded deployments:** `0xaABd...`, `0xd459...`, `0x6Ceb...`, and `0xc7d...` are historical and are not canonical.
+- **Steward review follow-up:** source hardening is ready but not deployed: charter digest verification, explicit collaborator acceptance, and retryable post-abstention finalization. Do not claim these are live until a fresh immutable deployment and lifecycle proof exist.
 
 ## Immediate implementation sequence
 

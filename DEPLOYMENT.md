@@ -2,6 +2,8 @@
 
 The single canonical StudioSplit contract is `0xb178cc6319eD4143464fbf5218625723fF6a5bb4`, deployed from source commit `41d2940e336618fa3f47b34c3d5a38c5125daf88` with deployment tx `0x54a0ebd76c8041b7de933d12099bd947c701be3fbc87eb0c74597243c82d56c5`.
 
+Steward hardening is implemented in the working tree but is not yet deployed: charter content is fetched and digest-verified during adjudication, collaborators explicitly accept on-chain, and abstained finalizations can be retried into a new record. The canonical deployment above therefore remains the prior release until a fresh deployment proves these additions.
+
 - Deployment result: `MAJORITY_AGREE`; leader execution `SUCCESS` with returned `FINALIZED`/`10000` payload
 - Official StudioNet explorer: https://explorer-studio.genlayer.com
 - Deployed schema: verified; 15 required methods present
