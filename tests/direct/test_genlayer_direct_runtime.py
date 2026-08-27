@@ -4,6 +4,7 @@ They are skipped only when the official `genlayer-test` runtime is unavailable.
 With the dependency installed, pytest's direct_vm/direct_deploy fixtures execute them.
 """
 import json
+import hashlib
 import pytest
 
 pytest.importorskip("gltest", reason="official GenLayer direct-test runtime is not installed")
@@ -16,6 +17,45 @@ RUBRIC = json.dumps({"dimensions": [
     {"code": "DIRECTION", "weight": 10},
 ]})
 DIGEST = "sha256:" + "a" * 64
+CHARTER_URL = "https://example.com/charter-v1.txt"
+EVIDENCE_URL = "https://example.com/evidence-v1.txt"
+CHARTER_TEXT = "A signed project charter establishing the frozen creative scope."
+EVIDENCE_TEXT = "Public evidence records the collaborator's concrete writing decisions."
+
+
+def digest(value: str) -> str:
+    return "sha256:" + hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def address_hex(value: bytes) -> str:
+    return "0x" + bytes(value).hex()
+
+
+def setup_project(contract, direct_vm, direct_deploy, alice, bob):
+    direct_vm.sender = alice
+    project_id = contract.create_project("Steward runtime", CHARTER_URL, digest(CHARTER_TEXT), RUBRIC)
+    contract.add_collaborator(project_id, address_hex(bob), "Editor")
+    return project_id
+
+
+def prepare_finalization(contract, direct_vm, project_id, alice, bob):
+    direct_vm.sender = alice
+    contract.submit_checkpoint(project_id, EVIDENCE_URL, digest(EVIDENCE_TEXT), "WRITING", "A bounded contribution description that is long enough.")
+    direct_vm.sender = bob
+    contract.accept_collaboration(project_id)
+    direct_vm.sender = alice
+    return contract.request_finalization(project_id, EVIDENCE_URL, digest(EVIDENCE_TEXT))
+
+
+def configure_successful_evidence(direct_vm, alice, bob):
+    direct_vm.mock_web("charter-v1\\.txt", {"status": 200, "body": CHARTER_TEXT})
+    direct_vm.mock_web("evidence-v1\\.txt", {"status": 200, "body": EVIDENCE_TEXT})
+    dimensions = ["WRITING", "ARRANGEMENT", "PRODUCTION", "VISUAL_EDIT", "DIRECTION"]
+    bands = [{"wallet": address_hex(wallet), "dimension": dimension, "band": 0, "relation": "NORMAL"}
+             for wallet in (alice, bob) for dimension in dimensions]
+    bands[0]["band"] = 3
+    response = json.dumps({"outcome": "FINALIZE", "bands": bands, "reason": "Verified."})
+    direct_vm.mock_llm(".*", response)
 
 
 def test_create_project_and_backendless_views(direct_vm, direct_deploy, direct_alice):
@@ -28,7 +68,7 @@ def test_create_project_and_backendless_views(direct_vm, direct_deploy, direct_a
     assert project["status"] == "OPEN"
     assert project["collaborator_count"] == 1
     assert contract.list_projects(0, 20)[0]["project_id"] == 1
-    assert contract.list_collaborators(1)[0]["wallet"].lower() == direct_alice.as_hex.lower()
+    assert contract.list_collaborators(1)[0]["wallet"].lower() == address_hex(direct_alice).lower()
 
 
 def test_unregistered_wallet_cannot_checkpoint(direct_vm, direct_deploy, direct_alice, direct_bob):
@@ -36,7 +76,7 @@ def test_unregistered_wallet_cannot_checkpoint(direct_vm, direct_deploy, direct_
     direct_vm.sender = direct_alice
     contract.create_project("Afterglow", "https://example.com/charter-v1.txt", DIGEST, RUBRIC)
     direct_vm.sender = direct_bob
-    with direct_vm.expect_revert("registered collaborator only"):
+    with pytest.raises(AssertionError, match="registered collaborator only"):
         contract.submit_checkpoint(
             1,
             "https://example.com/evidence-v1.txt",
@@ -50,7 +90,7 @@ def test_invalid_evidence_digest_is_rejected(direct_vm, direct_deploy, direct_al
     contract = direct_deploy("contracts/studiosplit.py")
     direct_vm.sender = direct_alice
     contract.create_project("Digest guard", "https://example.com/charter-v1.txt", DIGEST, RUBRIC)
-    with direct_vm.expect_revert("artifact digest must be sha256"):
+    with pytest.raises(AssertionError, match="artifact digest must be sha256"):
         contract.submit_checkpoint(
             1,
             "https://example.com/evidence-v1.txt",
@@ -64,5 +104,47 @@ def test_duplicate_collaborator_is_rejected(direct_vm, direct_deploy, direct_ali
     contract = direct_deploy("contracts/studiosplit.py")
     direct_vm.sender = direct_alice
     contract.create_project("Collaborator guard", "https://example.com/charter-v1.txt", DIGEST, RUBRIC)
-    with direct_vm.expect_revert("collaborator already registered"):
-        contract.add_collaborator(1, direct_alice.as_hex, "Duplicate")
+    with pytest.raises(AssertionError, match="collaborator already registered"):
+        contract.add_collaborator(1, address_hex(direct_alice), "Duplicate")
+
+
+def test_collaborator_acceptance_is_recorded_and_required(direct_vm, direct_deploy, direct_alice, direct_bob):
+    contract = direct_deploy("contracts/studiosplit.py")
+    project_id = setup_project(contract, direct_vm, direct_deploy, direct_alice, direct_bob)
+    assert contract.list_collaborators(project_id)[1]["accepted"] is False
+    direct_vm.sender = direct_alice
+    contract.submit_checkpoint(project_id, EVIDENCE_URL, digest(EVIDENCE_TEXT), "WRITING", "A bounded contribution description that is long enough.")
+    with pytest.raises(AssertionError, match="all collaborators must accept before finalization"):
+        contract.request_finalization(project_id, EVIDENCE_URL, digest(EVIDENCE_TEXT))
+    direct_vm.sender = direct_bob
+    contract.accept_collaboration(project_id)
+    assert contract.list_collaborators(project_id)[1]["accepted"] is True
+
+
+def test_evidence_failure_abstains_and_retry_creates_fresh_finalization(direct_vm, direct_deploy, direct_alice, direct_bob):
+    contract = direct_deploy("contracts/studiosplit.py")
+    project_id = setup_project(contract, direct_vm, direct_deploy, direct_alice, direct_bob)
+    finalization_id = prepare_finalization(contract, direct_vm, project_id, direct_alice, direct_bob)
+    direct_vm.sender = direct_alice
+    result = contract.adjudicate_finalization(finalization_id)
+    assert result["status"] == "ABSTAINED"
+    assert contract.get_finalization(finalization_id)["status"] == "ABSTAINED"
+    retry_id = contract.retry_finalization(finalization_id, EVIDENCE_URL, digest(EVIDENCE_TEXT))
+    assert retry_id != finalization_id
+    assert contract.get_finalization(retry_id)["status"] == "FINALIZATION_REQUESTED"
+    assert contract.get_project(project_id)["active_finalization_id"] == retry_id
+
+
+def test_successful_adjudication_after_retry_finalizes_exactly_10000(direct_vm, direct_deploy, direct_alice, direct_bob):
+    contract = direct_deploy("contracts/studiosplit.py")
+    project_id = setup_project(contract, direct_vm, direct_deploy, direct_alice, direct_bob)
+    finalization_id = prepare_finalization(contract, direct_vm, project_id, direct_alice, direct_bob)
+    direct_vm.sender = direct_alice
+    assert contract.adjudicate_finalization(finalization_id)["status"] == "ABSTAINED"
+    retry_id = contract.retry_finalization(finalization_id, EVIDENCE_URL, digest(EVIDENCE_TEXT))
+    configure_successful_evidence(direct_vm, direct_alice, direct_bob)
+    result = contract.adjudicate_finalization(retry_id)
+    assert result["status"] == "FINALIZED"
+    assert contract.get_project(project_id)["status"] == "FINALIZED"
+    assert contract.get_finalization(retry_id)["status"] == "FINALIZED"
+    assert contract.get_split(project_id)["total_bps"] == 10000

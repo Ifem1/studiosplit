@@ -526,19 +526,21 @@ class StudioSplit(gl.Contract):
         return finalization_id
 
     @gl.public.write
-    def retry_finalization(self, finalization_id: int) -> int:
-        """Open a fresh adjudication attempt after an evidence/consensus abstention."""
+    def retry_finalization(self, finalization_id: int, release_artifact_url: str, release_digest: str) -> int:
+        """Open a fresh attempt with corrected/replaced release evidence."""
         previous = self._finalization(finalization_id)
         project = self._project(int(previous.project_id))
         self._require_creator(project)
         assert int(previous.status) == FINALIZATION_ABSTAINED, "finalization is not retryable"
         assert int(project.active_finalization_id) == finalization_id, "stale finalization"
         assert int(project.checkpoint_count) == int(previous.frozen_checkpoint_count), "checkpoint set changed"
+        release_artifact_url = self._require_https_url(release_artifact_url, "release artifact url")
+        release_digest = self._require_digest(release_digest)
         next_id = int(self.finalization_count) + 1
         self.finalizations[u256(next_id)] = Finalization(
             project_id=previous.project_id,
-            release_url=previous.release_url,
-            release_digest=previous.release_digest,
+            release_url=release_artifact_url,
+            release_digest=release_digest,
             status=u8(FINALIZATION_REQUESTED),
             base_version=previous.base_version,
             frozen_checkpoint_count=previous.frozen_checkpoint_count,

@@ -43,7 +43,7 @@ def test_charter_provenance_and_consent_are_authoritative():
 
 
 def test_abstention_has_a_retryable_adjudication_path():
-    assert 'def retry_finalization(self, finalization_id: int)' in TEXT
+    assert 'def retry_finalization(self, finalization_id: int, release_artifact_url: str, release_digest: str)' in TEXT
     assert 'assert int(previous.status) == FINALIZATION_ABSTAINED' in TEXT
     assert 'project.status = u8(STATUS_FINALIZATION_REQUESTED)' in TEXT
 
