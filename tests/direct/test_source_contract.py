@@ -56,8 +56,7 @@ def test_validator_cannot_author_retrieval_provenance():
     assert 'record.overlap_refs_json = json.dumps(memory_ids' in TEXT
     assert "gl.eq_principle.prompt_comparative" not in TEXT
     assert "gl.vm.run_nondet_unsafe" in TEXT
-    assert "_normalize_decision_candidate(leader_candidate, expected_pairs)" in TEXT
-    assert "_normalize_decision_candidate(validator_candidate, expected_pairs)" in TEXT
+    assert "_decision_candidates_equivalent(leader_candidate, validator_candidate, expected_pairs)" in TEXT
 
 
 def test_empty_candidate_set_is_stored_as_empty_provenance():

@@ -5,7 +5,17 @@ With the dependency installed, pytest's direct_vm/direct_deploy fixtures execute
 """
 import json
 import hashlib
+import ast
+from pathlib import Path
 import pytest
+
+_source_tree = ast.parse((Path(__file__).parents[2] / "contracts" / "studiosplit.py").read_text())
+_comparison_nodes = [node for node in _source_tree.body if isinstance(node, ast.FunctionDef) and node.name in {
+    "_normalize_decision_candidate", "_decision_candidates_equivalent"
+}]
+_comparison_namespace = {}
+exec(compile(ast.Module(body=_comparison_nodes, type_ignores=[]), "studiosplit.py", "exec"), _comparison_namespace)
+_decision_candidates_equivalent = _comparison_namespace["_decision_candidates_equivalent"]
 
 pytest.importorskip("gltest", reason="official GenLayer direct-test runtime is not installed")
 
@@ -21,6 +31,56 @@ CHARTER_URL = "https://example.com/charter-v1.txt"
 EVIDENCE_URL = "https://example.com/evidence-v1.txt"
 CHARTER_TEXT = "A signed project charter establishing the frozen creative scope."
 EVIDENCE_TEXT = "Public evidence records the collaborator's concrete writing decisions."
+
+
+EXPECTED_PAIRS = ["0xabc|ARRANGEMENT", "0xabc|DIRECTION"]
+
+
+def candidate(rows, reason=""):
+    return {"outcome": "FINALIZE", "bands": rows, "reason": reason}
+
+
+def test_comparator_normalizes_order_and_ignores_rationale_and_relation():
+    left = candidate([
+        {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 2, "relation": "NORMAL"},
+        {"wallet": "0xabc", "dimension": "DIRECTION", "band": 0, "relation": "DEPENDENT"},
+    ], "left")
+    right = candidate([
+        {"wallet": "0xabc", "dimension": "DIRECTION", "band": 0, "relation": "DUPLICATIVE"},
+        {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 3, "relation": "NORMAL"},
+    ], "right")
+    assert _decision_candidates_equivalent(left, right, EXPECTED_PAIRS)
+
+
+def test_comparator_rejects_large_or_zero_positive_band_drift():
+    base = candidate([
+        {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 2, "relation": "NORMAL"},
+        {"wallet": "0xabc", "dimension": "DIRECTION", "band": 0, "relation": "NORMAL"},
+    ])
+    assert not _decision_candidates_equivalent(base, candidate([
+        {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 4, "relation": "NORMAL"},
+        {"wallet": "0xabc", "dimension": "DIRECTION", "band": 0, "relation": "NORMAL"},
+    ]), EXPECTED_PAIRS)
+    assert not _decision_candidates_equivalent(base, candidate([
+        {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 2, "relation": "NORMAL"},
+        {"wallet": "0xabc", "dimension": "DIRECTION", "band": 1, "relation": "NORMAL"},
+    ]), EXPECTED_PAIRS)
+
+
+def test_comparator_rejects_invented_or_missing_pairs():
+    base = candidate([
+        {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 2, "relation": "NORMAL"},
+        {"wallet": "0xabc", "dimension": "DIRECTION", "band": 0, "relation": "NORMAL"},
+    ])
+    with pytest.raises(AssertionError):
+        _decision_candidates_equivalent(base, candidate([
+            {"wallet": "0xdef", "dimension": "ARRANGEMENT", "band": 2, "relation": "NORMAL"},
+            {"wallet": "0xabc", "dimension": "DIRECTION", "band": 0, "relation": "NORMAL"},
+        ]), EXPECTED_PAIRS)
+    with pytest.raises(AssertionError):
+        _decision_candidates_equivalent(base, candidate([
+            {"wallet": "0xabc", "dimension": "ARRANGEMENT", "band": 2, "relation": "NORMAL"},
+        ]), EXPECTED_PAIRS)
 
 
 def digest(value: str) -> str:

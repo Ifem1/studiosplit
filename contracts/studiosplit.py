@@ -168,6 +168,27 @@ def _normalize_decision_candidate(candidate: dict, expected_pairs: list[str]) ->
     return {"outcome": outcome, "bands": normalized_rows}
 
 
+def _decision_candidates_equivalent(left: dict, right: dict, expected_pairs: list[str]) -> bool:
+    """Compare only deterministic decision fields, tolerating bounded model drift."""
+    left_normalized = _normalize_decision_candidate(left, expected_pairs)
+    right_normalized = _normalize_decision_candidate(right, expected_pairs)
+    if left_normalized["outcome"] != right_normalized["outcome"]:
+        return False
+    if left_normalized["outcome"] == "ABSTAIN":
+        return True
+    for left_row, right_row in zip(left_normalized["bands"], right_normalized["bands"]):
+        if (left_row["wallet"], left_row["dimension"]) != (right_row["wallet"], right_row["dimension"]):
+            return False
+        left_band = left_row["band"]
+        right_band = right_row["band"]
+        if left_band == 0 or right_band == 0:
+            if left_band != right_band:
+                return False
+        elif abs(left_band - right_band) > 1:
+            return False
+    return True
+
+
 class StudioSplit(gl.Contract):
     projects: TreeMap[u256, Project]
     collaborators: TreeMap[str, Collaborator]
@@ -770,7 +791,7 @@ For FINALIZE, bands must contain exactly one row for every expected pair and no 
                     return False
                 leader_candidate = leader_result.calldata
                 validator_candidate = evaluate_candidate()
-                return _normalize_decision_candidate(leader_candidate, expected_pairs) == _normalize_decision_candidate(validator_candidate, expected_pairs)
+                return _decision_candidates_equivalent(leader_candidate, validator_candidate, expected_pairs)
             except Exception:
                 return False
 
