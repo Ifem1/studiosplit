@@ -40,6 +40,7 @@ def test_charter_provenance_and_consent_are_authoritative():
     assert 'accepted: bool' in TEXT
     assert 'assert collab.accepted, "all collaborators must accept before finalization"' in TEXT
     assert 'def accept_collaboration(self, project_id: int)' in TEXT
+    assert 'wallet if isinstance(wallet, Address) else Address(wallet)' in TEXT
 
 
 def test_abstention_has_a_retryable_adjudication_path():

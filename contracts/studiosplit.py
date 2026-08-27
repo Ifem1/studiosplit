@@ -415,7 +415,9 @@ class StudioSplit(gl.Contract):
         assert int(project.collaborator_count) < MAX_COLLABORATORS, "collaborator limit reached"
         role_label = role_label.strip()
         assert 2 <= len(role_label) <= MAX_ROLE, "invalid role label"
-        address = Address(wallet)
+        # CLI/browser calldata may decode an address argument before Python
+        # receives it; avoid wrapping an Address instance a second time.
+        address = wallet if isinstance(wallet, Address) else Address(wallet)
         key = self._collab_key(project_id, address)
         assert self.collaborators.get(key, None) is None, "collaborator already registered"
         index = int(project.collaborator_count)
