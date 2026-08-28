@@ -50,7 +50,7 @@ Writes use only `window.ethereum`. The write helper re-checks the active account
 
 ## Local fixture mode
 
-`.env.example` defaults to `NEXT_PUBLIC_STUDIOSPLIT_DATA=fixture` so reviewers can inspect the complete interface without fabricating live chain state. Fixture screens are visibly labeled and write buttons are disabled.
+`.env.example` is configured for the canonical live deployment below. To inspect the interface without chain state, set `NEXT_PUBLIC_STUDIOSPLIT_DATA=fixture` locally; fixture screens are visibly labeled and write buttons are disabled.
 
 For real use, set:
 
@@ -67,17 +67,17 @@ Live mode never silently falls back to fixtures.
 
 ```text
 python -m compileall -q contracts tests              PASS
-pytest tests/direct tests/frontend -q                18 passed, 4 runtime failures
-node --test tests/frontend/*.test.mjs                PASS
-node scripts/verify-schema.mjs                       PASS (15/15)
+pytest tests/direct -q                              30 passed
+node --test tests/frontend/*.test.mjs                PASS (4 passed)
+node scripts/verify-schema.mjs                       PASS (17/17)
 npm run typecheck                                     PASS
 npm run lint                                          PASS
 npm run build                                         PASS
 ```
 
-The four runtime failures are a Windows-only `gltest` temporary-file cleanup error (`PermissionError: [WinError 32]`) during direct VM deployment; the package is installed and the remaining 18 source/direct/frontend tests pass. The live StudioNet lifecycle below is independent runtime proof.
+Contract compile, direct GenLayer runtime tests, frontend tests, schema verification, typecheck, ESLint, and the production build all pass.
 
-Current release status: the canonical StudioNet contract is `0xE133EAc93C43F2ed0016468453eB74De33D3d383`, deployed from source commit `fcc2f49f12efa6e3353901219a519b17814cd98e` with deployment tx `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`. Project 2 finalization 4 reached `FINALIZED` through adjudication tx `0xb1e8c848ba9ba8ccc85013d52032aab73584b7fe2152c61c81ab9344e78f459d`; `get_split(2)` returned one entry at `10000` bps and `total_bps=10000`. The retry was preceded by an on-chain `ABSTAINED` finalization 3 and retry tx `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`. Official StudioNet explorer: https://explorer-studio.genlayer.com. Production frontend: https://studiosplit-web.vercel.app (Vercel deployment `D2zRetQPrpWDnAZdNihSuGnQHEGX`).
+Current release status: the canonical StudioNet contract is `0xE133EAc93C43F2ed0016468453eB74De33D3d383`, deployed from source commit `fcc2f49f12efa6e3353901219a519b17814cd98e` with deployment tx `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`. Project 2 finalization 4 reached `FINALIZED` through successful retry adjudication tx `0x96121c5fc65b0ce6fc53dea557a155fbfbdc77e4d78d14ff36858c8f9009d56f`; `get_split(2)` returned one entry at `10000` bps and `total_bps=10000`. The authoritative project-2 checkpoint is `0x3b746559f677846597ac3519e381a3ddfe7a34b712a74f69b551871d9091722a`. The retry was preceded by abstention adjudication tx `0x9c08df5845eb65b72d69e6c2f8bafd4e913ba2b840c626e91a8e2baf6cb5b927` and retry tx `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`. Official StudioNet explorer: https://explorer-studio.genlayer.com. Production frontend: https://studiosplit-web.vercel.app (Vercel deployment `D2zRetQPrpWDnAZdNihSuGnQHEGX`).
 
 ## Release verification
 

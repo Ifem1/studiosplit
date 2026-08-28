@@ -6,9 +6,9 @@ The hardened release verifies public evidence digests, records collaborator acce
 
 - Deployment result: `MAJORITY_AGREE`; leader execution `SUCCESS` with returned `FINALIZED`/`10000` payload
 - Official StudioNet explorer: https://explorer-studio.genlayer.com
-- Deployed schema: verified; 15 required methods present
+- Deployed schema: verified; 17/17 required methods present
 
-Lifecycle evidence on the canonical deployment: create `0x3dd47ce9a75300da4fd3e480d7ba740123d44c31601ace001ff672ad3ab83192`; add collaborator `0x41d0706115d7dfc21c7e4dc9027ab79ae4ad7aaff66d50d4fc02b484555c458b`; accept `0xfee31b5ba676669a0a2ed28af7557340e89cb3d178a90e81675e95ab64d7d443`; checkpoint `0x80f43390c01e151544c3221943c0dc49b6baf25ba11c14f081a122cc8a8ce376`; abstention adjudication `0x9c08df5845eb65b72d69e6c2f8bafd4e913ba2b840c626e91a8e2baf6cb5b927`; retry `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`; successful retry adjudication `0xb1e8c848ba9ba8ccc85013d52032aab73584b7fe2152c61c81ab9344e78f459d`.
+Project 2 lifecycle evidence on the canonical deployment: create `0x3dd47ce9a75300da4fd3e480d7ba740123d44c31601ace001ff672ad3ab83192`; checkpoint `0x3b746559f677846597ac3519e381a3ddfe7a34b712a74f69b551871d9091722a`; abstention adjudication for finalization 3 `0x9c08df5845eb65b72d69e6c2f8bafd4e913ba2b840c626e91a8e2baf6cb5b927`; retry to finalization 4 `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`; successful retry adjudication `0x96121c5fc65b0ce6fc53dea557a155fbfbdc77e4d78d14ff36858c8f9009d56f`. Separate collaborator-consent evidence was recorded on-chain with add `0x41d0706115d7dfc21c7e4dc9027ab79ae4ad7aaff66d50d4fc02b484555c458b` and acceptance `0xfee31b5ba676669a0a2ed28af7557340e89cb3d178a90e81675e95ab64d7d443`.
 
 Final proof: project 2, finalization 4, status `FINALIZED`, `get_split(2).total_bps=10000`. Earlier project 1 consent registration/acceptance and finalization 1/2 are retained as historical evidence; project 2 is the successful retry proof.
 

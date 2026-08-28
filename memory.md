@@ -25,9 +25,9 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 **Phase:** Canonical StudioNet lifecycle and hosted live-read deployment verified
 **Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`
 **StudioNet contract:** `0xE133EAc93C43F2ed0016468453eB74De33D3d383` (canonical deployment; source `fcc2f49f12efa6e3353901219a519b17814cd98e`)
-**Live frontend:** https://studiosplit-web.vercel.app (Vercel deployment `dpl_D9KjCD1buCJR1KEqbb6CLRFGndWC`)
-**Live proof:** project 1 and finalization 1 are `FINALIZED`; terminal consensus is `MAJORITY_AGREE`; `get_split(1).total_bps=10000`
-**Last durable update:** 2026-08-26
+**Live frontend:** https://studiosplit-web.vercel.app (current production deployment `D2zRetQPrpWDnAZdNihSuGnQHEGX`)
+**Current authoritative proof:** project 2, abstained finalization 3, retry finalization 4; finalization 4 and project 2 are `FINALIZED`, terminal consensus is `MAJORITY_AGREE`, and `get_split(2).total_bps=10000`.
+**Last durable update:** 2026-08-28
 
 **Steward hardening live proof:** charter provenance is digest-verified during adjudication, collaborator acceptance was recorded on-chain, and project 2 exercised `ABSTAINED` finalization 3 → retry finalization 4 → `FINALIZED` with `total_bps=10000`. Deployment tx: `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`. Official explorer: https://explorer-studio.genlayer.com.
 
@@ -150,12 +150,12 @@ At the end of every work session:
 2. Update this file only for durable decisions/status changes.
 3. Do not paste long implementation logs here; keep those in `handoff.md`.
 4. Never record secrets, private keys, seed phrases or private source material.
-## 2026-08-25 release audit status
+## Historical — 2026-08-25 release audit status
 
 The repository was cloned and audited. The real contract/frontend source exists; interrupted `.bootstrap2/part-10` transfer residue was removed. Verified: Python contract compilation, source schema (15/15), direct tests (7 passed, 1 skipped), and frontend source tests (4 passed). `npm install` stalled in the current environment, so dependency-backed typecheck/lint/production build are not claimed. No StudioNet deployment, live transaction evidence, or hosted frontend URL is claimed.
 
-## 2026-08-25 deployment continuation
+## Historical — 2026-08-25 deployment continuation
 
 Frontend dependencies installed successfully. TypeScript, ESLint, Next production build, frontend tests (4 passed), and direct tests (7 passed, 1 skipped) pass. StudioNet deployment is verified from source commit `8ffd51da2524209e3f4df0196cad769d759eb5c0`: contract `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`, deployment tx `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`, schema 15 methods. Read-only smoke returned project_count 0. Live lifecycle and hosted frontend remain unproven; CLI writes with malformed rubric/url were rejected fail-closed.
 
-Current authoritative status supersedes earlier entries: the canonical hardened deployment is `0xE133EAc93C43F2ed0016468453eB74De33D3d383`, deployment tx `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`, source `fcc2f49f12efa6e3353901219a519b17814cd98e`. Project 2 finalization 4 is `FINALIZED` with `get_split(2).total_bps=10000`; it followed ABSTAINED finalization 3 and retry tx `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`. Production frontend: `https://studiosplit-web.vercel.app`; official explorer: https://explorer-studio.genlayer.com.
+Current authoritative status (2026-08-28) supersedes earlier entries: the canonical hardened deployment is `0xE133EAc93C43F2ed0016468453eB74De33D3d383`, deployment tx `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`, source `fcc2f49f12efa6e3353901219a519b17814cd98e`. Project 2 checkpoint is `0x3b746559f677846597ac3519e381a3ddfe7a34b712a74f69b551871d9091722a`; finalization 3 abstention is `0x9c08df5845eb65b72d69e6c2f8bafd4e913ba2b840c626e91a8e2baf6cb5b927`; retry to finalization 4 is `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`; successful retry adjudication is `0x96121c5fc65b0ce6fc53dea557a155fbfbdc77e4d78d14ff36858c8f9009d56f`. Finalization 4 and project 2 are `FINALIZED` with `get_split(2).total_bps=10000`. Production frontend: `https://studiosplit-web.vercel.app` deployment `D2zRetQPrpWDnAZdNihSuGnQHEGX`; official explorer: https://explorer-studio.genlayer.com.

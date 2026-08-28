@@ -4,11 +4,16 @@
 
 ## Current checkpoint
 
+All dated entries below are historical work logs. The current release truth is the checkpoint above; older addresses, test counts, and “unproven” statements below are superseded records, not current status.
+
 - **Phase:** Canonical StudioNet lifecycle and hosted frontend live-read proof completed.
 - **Last completed work:** Source commit `fcc2f49f12efa6e3353901219a519b17814cd98e` deployed to `0xE133EAc93C43F2ed0016468453eB74De33D3d383`; project 2 finalization 4 finalized with exactly `10000` bps after a live abstention/retry proof.
 - **StudioNet address:** `0xE133EAc93C43F2ed0016468453eB74De33D3d383`.
 - **Deployment transaction:** `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`.
-- **Lifecycle adjudication:** `0xb1e8c848ba9ba8ccc85013d52032aab73584b7fe2152c61c81ab9344e78f459d`.
+- **Project 2 checkpoint:** `0x3b746559f677846597ac3519e381a3ddfe7a34b712a74f69b551871d9091722a`.
+- **Abstention adjudication (finalization 3):** `0x9c08df5845eb65b72d69e6c2f8bafd4e913ba2b840c626e91a8e2baf6cb5b927`.
+- **Retry (finalization 3 → 4):** `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`.
+- **Successful retry adjudication (finalization 4):** `0x96121c5fc65b0ce6fc53dea557a155fbfbdc77e4d78d14ff36858c8f9009d56f`.
 - **Final split:** one collaborator entry at `10000` bps; `get_split(2).total_bps=10000`.
 - **Frontend URL:** `https://studiosplit-web.vercel.app`.
 - **Vercel deployment:** `D2zRetQPrpWDnAZdNihSuGnQHEGX`.
