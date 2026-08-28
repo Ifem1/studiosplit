@@ -24,12 +24,12 @@ a project-version-bound contributor ownership/credit split expressed as exactly 
 
 **Phase:** Canonical StudioNet lifecycle and hosted live-read deployment verified
 **Code status:** Contract + backendless frontend published on `Ifem1/studiosplit` `main`
-**StudioNet contract:** `0xb178cc6319eD4143464fbf5218625723fF6a5bb4` (canonical deployment; source `41d2940e336618fa3f47b34c3d5a38c5125daf88`)
+**StudioNet contract:** `0xE133EAc93C43F2ed0016468453eB74De33D3d383` (canonical deployment; source `fcc2f49f12efa6e3353901219a519b17814cd98e`)
 **Live frontend:** https://studiosplit-web.vercel.app (Vercel deployment `dpl_D9KjCD1buCJR1KEqbb6CLRFGndWC`)
 **Live proof:** project 1 and finalization 1 are `FINALIZED`; terminal consensus is `MAJORITY_AGREE`; `get_split(1).total_bps=10000`
 **Last durable update:** 2026-08-26
 
-**Steward hardening pending deployment:** the source now verifies charter provenance during adjudication, records collaborator acceptance on-chain, and provides `retry_finalization` after an abstention. The canonical deployed address above remains unchanged until this source is deployed and live-tested.
+**Steward hardening live proof:** charter provenance is digest-verified during adjudication, collaborator acceptance was recorded on-chain, and project 2 exercised `ABSTAINED` finalization 3 → retry finalization 4 → `FINALIZED` with `total_bps=10000`. Deployment tx: `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`. Official explorer: https://explorer-studio.genlayer.com.
 
 The first implementing agent must not invent fake deployment addresses, transaction hashes, test counts or live URLs. Add them here only after they exist and have been verified.
 
@@ -158,4 +158,4 @@ The repository was cloned and audited. The real contract/frontend source exists;
 
 Frontend dependencies installed successfully. TypeScript, ESLint, Next production build, frontend tests (4 passed), and direct tests (7 passed, 1 skipped) pass. StudioNet deployment is verified from source commit `8ffd51da2524209e3f4df0196cad769d759eb5c0`: contract `0xaABdC3D91E4bb62Ee63A30055113B49C875BAf8b`, deployment tx `0x6c083a0ee80db7da80ff2ddd605befe392e9a323732240fd580a6cf2f564caf5`, schema 15 methods. Read-only smoke returned project_count 0. Live lifecycle and hosted frontend remain unproven; CLI writes with malformed rubric/url were rejected fail-closed.
 
-Current authoritative status supersedes earlier entries: the canonical hardened deployment is `0xd45953553188f4f985aF0F7978F3CB1f57fB1dde` (`0x27ec436feb88125ec294afa211099c3f739f563d3f5840ac23dd7f51c1d0b020`). Its project 1 reads `ABSTAINED` with `total_bps=0`, so no hardened 10,000-bps receipt is claimed. The production frontend at `https://studiosplit-web.vercel.app` reads this canonical contract and its Artifacts route is hard-refresh verified.
+Current authoritative status supersedes earlier entries: the canonical hardened deployment is `0xE133EAc93C43F2ed0016468453eB74De33D3d383`, deployment tx `0xd10e448db2c5158808ced2e02f707f8282b1b30b39057510577734f3f2b64522`, source `fcc2f49f12efa6e3353901219a519b17814cd98e`. Project 2 finalization 4 is `FINALIZED` with `get_split(2).total_bps=10000`; it followed ABSTAINED finalization 3 and retry tx `0x14af2205b32e58fa5a3999463ae7a05784265ba61e53894b596a89ae38c6e862`. Production frontend: `https://studiosplit-web.vercel.app`; official explorer: https://explorer-studio.genlayer.com.
